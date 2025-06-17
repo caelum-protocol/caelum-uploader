@@ -2,26 +2,70 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   color: var(--foreground);
-  background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+  @apply transition-colors duration-300;
+  background-color: #0a0a0a;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+/* === THEME DEFINITIONS === */
+
+.dark {
+  --drop-border: #475569;
+}
+
+.matrix {
+  background-color: black;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  --accent-glow: #00ff00;
+  --drop-border: #00cc00;
+}
+
+.iris {
+  background: radial-gradient(circle at top, #1a1a2e, #000000 70%);
+  color: #e0d5ff;
+  font-family: 'Geist', sans-serif;
+  --drop-border: #a78bfa;
+}
+
+.glass {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(12px);
+  color: #e2e8f0;
+  --drop-border: #475569;
+}
+
+.pepe {
+  background: url("/pepememe.png") center/cover no-repeat fixed;
+  color: #bada55;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  --accent-glow: #4ade80;
+  --drop-border: #22c55e;
+}
+
+/* === THEMED COMPONENT STYLES === */
+.theme-card {
+  @apply rounded-xl border p-4 sm:p-6 shadow-lg transition-all duration-300;
+  border-color: var(--drop-border);
+}
+
+.dark .theme-card,
+.glass .theme-card {
+  @apply bg-slate-900;
+}
+
+.matrix .theme-card {
+  @apply bg-black bg-opacity-80 text-green-400;
+}
+
+.pepe .theme-card {
+  background-color: rgba(16, 100, 16, 0.6);
+  @apply backdrop-blur-md;
+}
+
+.iris .theme-card {
+  background-color: rgba(26, 1, 56, 0.5);
+  @apply backdrop-blur-md;
 }

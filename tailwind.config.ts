@@ -2,18 +2,50 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",  // Includes all app routes & components
+    "./public/index.html",            // If using static HTML
   ],
   theme: {
     extend: {
+      // Add any custom theme variables here
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        iris: {
+          DEFAULT: "#1a1a2e", // Customize as needed
+        },
+        matrix: {
+          DEFAULT: "#0f0",
+        },
+        pepe: {
+          DEFAULT: "#0c6b2d",
+        },
+        glass: {
+          DEFAULT: "rgba(255, 255, 255, 0.1)",
+        },
+      },
+      backgroundImage: {
+        // Optional: Add named background images for themes
+        'iris-bg': "url('/images/irisuploaderbg.png')",
+        'matrix-rain': "url('/images/matrixrainbg.png')",
       },
     },
   },
+  darkMode: "class", // Enables use of `dark:` variants when `class="dark"` is set
+  safelist: [
+    "dark",
+    "iris",
+    "matrix",
+    "pepe",
+    "glass",
+    "bg-iris",
+    "bg-matrix",
+    "bg-pepe",
+    "bg-glass",
+    "text-iris",
+    "text-matrix",
+    "text-pepe",
+    "text-glass",
+  ],
   plugins: [],
 };
+
 export default config;
