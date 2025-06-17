@@ -49,7 +49,7 @@ export const Header = () => {
   };
 
   return (
-    <header className="flex justify-between items-center px-4 py-3 border-b border-slate-700 bg-black bg-opacity-80 backdrop-blur">
+    <header className="z-50 relative flex justify-between items-center px-4 py-3 border-b border-slate-700">
       <div className="flex items-center gap-4">
         <Image
           src="/CaelumLogo.png"

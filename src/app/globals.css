@@ -30,42 +30,107 @@ body {
   --drop-border: #a78bfa;
 }
 
-.glass {
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(12px);
-  color: #e2e8f0;
-  --drop-border: #475569;
-}
-
 .pepe {
-  background: url("/pepememe.png") center/cover no-repeat fixed;
+  background-color: #2e261d;
+  background-image: url("/pepewide.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
   color: #bada55;
-  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-family: "Comic Sans MS", cursive, sans-serif;
   --accent-glow: #4ade80;
-  --drop-border: #22c55e;
+  --drop-border: #bada55;
 }
 
-/* === THEMED COMPONENT STYLES === */
+/* === COMPONENTS === */
+
 .theme-card {
   @apply rounded-xl border p-4 sm:p-6 shadow-lg transition-all duration-300;
   border-color: var(--drop-border);
 }
 
-.dark .theme-card,
-.glass .theme-card {
-  @apply bg-slate-900;
-}
-
-.matrix .theme-card {
-  @apply bg-black bg-opacity-80 text-green-400;
+.dark .theme-card {
+  background-color: #121212;
+  border: 1px solid #333;
+  color: #eee;
+  @apply backdrop-blur-sm shadow-md transition-colors duration-300;
 }
 
 .pepe .theme-card {
-  background-color: rgba(16, 100, 16, 0.6);
-  @apply backdrop-blur-md;
+  background-color: rgba(90, 70, 45, 0.8);
+  @apply backdrop-blur border-[#bada55] text-[#faffc4] shadow-md;
+}
+
+.pepe .theme-card:hover {
+  box-shadow: 0 0 10px #bada55, 0 0 25px #bada55;
+  border-color: #d4ff55;
+}
+
+.pepe header {
+  border-bottom: 2px solid #4a3b28;
+  box-shadow: 0 2px 6px #bada55;
 }
 
 .iris .theme-card {
   background-color: rgba(26, 1, 56, 0.5);
   @apply backdrop-blur-md;
+}
+
+/* === MATRIX === */
+
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 4px #00ff00, 0 0 8px #00ff00;
+  }
+  50% {
+    box-shadow: 0 0 2px #00cc00, 0 0 4px #00cc00;
+  }
+}
+
+.matrix .theme-card {
+  background-color: rgba(0, 0, 0, 0.85);
+  border: 1px solid #00ff00;
+  color: #00ff88;
+  animation: glowPulse 3s ease-in-out infinite;
+  @apply backdrop-blur-sm shadow-md;
+}
+
+.matrix header {
+  background-color: rgba(0, 0, 0, 0.95);
+  border-bottom: 1px solid #00ff00;
+  color: #00ffcc;
+  box-shadow: 0 0 10px #00ff00;
+  z-index: 50;
+  @apply backdrop-blur-md;
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+.matrix .theme-card:hover {
+  box-shadow: 0 0 12px #272727;
+  border-color: #000000;
+}
+
+/* === DROPZONE HOVER GLOW === */
+
+.matrix .dropzone-active {
+  border: 2px solid #00ff00;
+  animation: glowPulse 1.8s ease-in-out infinite;
+  background-color: rgba(0, 0, 0, 0.85);
+  color: #00ff88;
+}
+
+.iris .dropzone-active {
+  border: 2px solid #a78bfa;
+  box-shadow: 0 0 12px #a78bfa;
+}
+
+.pepe .dropzone-active {
+  border: 2px solid #bada55;
+  box-shadow: 0 0 12px #bada55;
+}
+
+.dark .dropzone-active {
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 12px #ffffff;
 }

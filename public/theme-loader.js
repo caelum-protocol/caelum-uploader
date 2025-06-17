@@ -1,7 +1,7 @@
 (function () {
   try {
     const saved = localStorage.getItem("caelumTheme");
-    const themes = ["dark", "glass", "iris", "matrix", "pepe"];
+    const themes = ["dark", "iris", "matrix", "pepe"];
     const theme = themes.includes(saved) ? saved : "dark";
 
     document.documentElement.className = theme;

@@ -18,9 +18,6 @@ const config: Config = {
         pepe: {
           DEFAULT: "#0c6b2d",
         },
-        glass: {
-          DEFAULT: "rgba(255, 255, 255, 0.1)",
-        },
       },
       backgroundImage: {
         // Optional: Add named background images for themes
@@ -35,15 +32,12 @@ const config: Config = {
     "iris",
     "matrix",
     "pepe",
-    "glass",
     "bg-iris",
     "bg-matrix",
     "bg-pepe",
-    "bg-glass",
     "text-iris",
     "text-matrix",
     "text-pepe",
-    "text-glass",
   ],
   plugins: [],
 };

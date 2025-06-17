@@ -16,7 +16,7 @@ const LoadingOverlay = () => {
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black transition-opacity duration-700 animate-fadeOut">
+    <div className="fixed inset-0 z-[999] bg-black flex flex-col justify-center items-center">
       <img
         src="/CaelumLogo.png"
         alt="Loading..."

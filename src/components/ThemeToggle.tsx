@@ -2,11 +2,10 @@
 
 import { useEffect, useState } from "react";
 
-const themes = ["dark", "glass", "iris", "matrix", "pepe"] as const;
+const themes = ["dark", "iris", "matrix", "pepe"] as const;
 type Theme = typeof themes[number];
 const emojis: Record<Theme, string> = {
   dark: "🌑",
-  glass: "🧊",
   iris: "🌌",
   matrix: "💻",
   pepe: "🐸",

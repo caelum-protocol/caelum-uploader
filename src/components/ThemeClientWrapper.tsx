@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-const validThemes = ["dark", "glass", "iris", "matrix", "pepe"];
+const validThemes = ["dark", "iris", "matrix", "pepe"];
 
 export const ThemeClientWrapper = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
