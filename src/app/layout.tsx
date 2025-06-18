@@ -27,10 +27,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider>
           <ThemeClientWrapper>
             <Web3Provider>
+              {/* Background layer (e.g., animated canvas) */}
+              <ThemeBackground />
+              <Header />
               <Toaster position="top-right" />
               <LoadingOverlay />
-              <Header />
-              <ThemeBackground />
               {children}
             </Web3Provider>
           </ThemeClientWrapper>

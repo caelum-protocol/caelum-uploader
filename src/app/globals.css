@@ -12,80 +12,27 @@ body {
 /* === THEME DEFINITIONS === */
 
 .dark {
-  --drop-border: #475569;
+  --drop-border: #888;
+  background-color: #0a0a0a;
+  color: #ffffff;
+  font-family: 'Courier New', monospace;
 }
 
+/* Scratchpad style effect */
+.dark .theme-card {
+  background-color: #111111;
+  background-image: radial-gradient(#222 1px, transparent 1px);
+  background-size: 4px 4px;
+  @apply backdrop-blur-sm border border-gray-700 text-white shadow-md;
+}
+
+/* === MATRIX === */
 .matrix {
   background-color: black;
   color: #00ff00;
   font-family: 'Courier New', monospace;
   --accent-glow: #00ff00;
   --drop-border: #00cc00;
-}
-
-.iris {
-  background: radial-gradient(circle at top, #1a1a2e, #000000 70%);
-  color: #e0d5ff;
-  font-family: 'Geist', sans-serif;
-  --drop-border: #a78bfa;
-}
-
-.pepe {
-  background-color: #2e261d;
-  background-image: url("/pepewide.png");
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-attachment: fixed;
-  color: #bada55;
-  font-family: "Comic Sans MS", cursive, sans-serif;
-  --accent-glow: #4ade80;
-  --drop-border: #bada55;
-}
-
-/* === COMPONENTS === */
-
-.theme-card {
-  @apply rounded-xl border p-4 sm:p-6 shadow-lg transition-all duration-300;
-  border-color: var(--drop-border);
-}
-
-.dark .theme-card {
-  background-color: #121212;
-  border: 1px solid #333;
-  color: #eee;
-  @apply backdrop-blur-sm shadow-md transition-colors duration-300;
-}
-
-.pepe .theme-card {
-  background-color: rgba(90, 70, 45, 0.8);
-  @apply backdrop-blur border-[#bada55] text-[#faffc4] shadow-md;
-}
-
-.pepe .theme-card:hover {
-  box-shadow: 0 0 10px #bada55, 0 0 25px #bada55;
-  border-color: #d4ff55;
-}
-
-.pepe header {
-  border-bottom: 2px solid #4a3b28;
-  box-shadow: 0 2px 6px #bada55;
-}
-
-.iris .theme-card {
-  background-color: rgba(26, 1, 56, 0.5);
-  @apply backdrop-blur-md;
-}
-
-/* === MATRIX === */
-
-@keyframes glowPulse {
-  0%, 100% {
-    box-shadow: 0 0 4px #00ff00, 0 0 8px #00ff00;
-  }
-  50% {
-    box-shadow: 0 0 2px #00cc00, 0 0 4px #00cc00;
-  }
 }
 
 .matrix .theme-card {
@@ -111,8 +58,65 @@ body {
   border-color: #000000;
 }
 
-/* === DROPZONE HOVER GLOW === */
+/* === IRIS === */
+.iris {
+  background: radial-gradient(circle at top, #1a1a2e, #000000 70%);
+  color: #e0d5ff;
+  font-family: 'Geist', sans-serif;
+  --drop-border: #a78bfa;
+}
 
+.iris .theme-card {
+  background-color: rgba(26, 1, 56, 0.5);
+  @apply backdrop-blur-md;
+}
+
+/* === PEPE === */
+.pepe {
+  background-color: #2e261d;
+  background-image: url("/pepewide.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  color: #bada55;
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  --accent-glow: #4ade80;
+  --drop-border: #bada55;
+}
+
+.pepe .theme-card {
+  background-color: rgba(90, 70, 45, 0.8);
+  @apply backdrop-blur border-[#bada55] text-[#faffc4] shadow-md;
+}
+
+.pepe .theme-card:hover {
+  box-shadow: 0 0 10px #bada55, 0 0 25px #bada55;
+  border-color: #d4ff55;
+}
+
+.pepe header {
+  border-bottom: 2px solid #4a3b28;
+  box-shadow: 0 2px 6px #bada55;
+}
+
+/* === COMPONENTS === */
+.theme-card {
+  @apply rounded-xl border p-4 sm:p-6 shadow-lg transition-all duration-300;
+  border-color: var(--drop-border);
+}
+
+/* === ANIMATIONS === */
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 4px #00ff00, 0 0 8px #00ff00;
+  }
+  50% {
+    box-shadow: 0 0 2px #00cc00, 0 0 4px #00cc00;
+  }
+}
+
+/* === DROPZONE HOVER GLOW === */
 .matrix .dropzone-active {
   border: 2px solid #00ff00;
   animation: glowPulse 1.8s ease-in-out infinite;

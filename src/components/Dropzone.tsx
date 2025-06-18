@@ -55,6 +55,7 @@ export default function Dropzone({
       : "hover:shadow-[0_0_16px_#ffffff]";
 
   return (
+    <div className="relative z-20 pointer-events-auto">
     <div
       {...getRootProps()}
       className={`theme-card border-2 rounded-xl p-4 text-center cursor-pointer select-none flex flex-col items-center justify-center transition-all duration-300 ${pulseClass} ${hoverClass}`}
@@ -66,6 +67,7 @@ export default function Dropzone({
           ? "Drop your memory to forge it into a shard..."
           : "Drag & drop a file, or click to select a memory to preserve"}
       </p>
+     </div>
     </div>
   );
 }
