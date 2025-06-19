@@ -36,7 +36,7 @@ export default function Dropzone({
   const glowMap: Record<string, string> = {
     matrix: "#00ff00",
     iris: "#a78bfa",
-    pepe: "#bada55",
+    pepe: "#ff53da",
     dark: "#ffffff",
   };
 
@@ -51,7 +51,7 @@ export default function Dropzone({
       : theme === "iris"
       ? "hover:shadow-[0_0_16px_#a78bfa]"
       : theme === "pepe"
-      ? "hover:shadow-[0_0_16px_#bada55]"
+      ? "hover:shadow-[0_0_16px_#ff53da]"
       : "hover:shadow-[0_0_16px_#ffffff]";
 
   return (

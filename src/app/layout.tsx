@@ -28,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ThemeClientWrapper>
             <Web3Provider>
               {/* Background layer (e.g., animated canvas) */}
-              <ThemeBackground />
+              <ThemeBackground memoryCount={0} memoryTrigger={false} />
               <Header />
               <Toaster position="top-right" />
               <LoadingOverlay />

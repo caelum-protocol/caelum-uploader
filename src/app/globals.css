@@ -70,34 +70,52 @@ body {
   background-color: rgba(26, 1, 56, 0.5);
   @apply backdrop-blur-md;
 }
+@keyframes irisPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
 
+.iris-core {
+  animation: irisPulse 6s ease-in-out infinite;
+}
+.iris-core:hover {
+  box-shadow: 0 0 40px rgba(138, 43, 226, 0.6);
+  transform: scale(1.12);
+  transition: all 0.3s ease;
+}
 /* === PEPE === */
 .pepe {
-  background-color: #2e261d;
+  background-color: #ff4ed9;
   background-image: url("/pepewide.png");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
   background-attachment: fixed;
-  color: #bada55;
+  color: #c42eff;
   font-family: "Comic Sans MS", cursive, sans-serif;
-  --accent-glow: #4ade80;
-  --drop-border: #bada55;
+  --accent-glow: #ff53da;
+  --drop-border: #df6363;
 }
 
 .pepe .theme-card {
-  background-color: rgba(90, 70, 45, 0.8);
-  @apply backdrop-blur border-[#bada55] text-[#faffc4] shadow-md;
+  background-color: rgba(141, 74, 218, 0.8);
+  @apply backdrop-blur border-[#ff53da] text-[#faffc4] shadow-md;
 }
 
 .pepe .theme-card:hover {
-  box-shadow: 0 0 10px #bada55, 0 0 25px #bada55;
-  border-color: #d4ff55;
+  box-shadow: 0 0 10px #bf55da, 0 0 25px #cb55da;
+  border-color: hsl(310, 100%, 65%);
 }
 
 .pepe header {
-  border-bottom: 2px solid #4a3b28;
-  box-shadow: 0 2px 6px #bada55;
+  border-bottom: 2px solid #aa36a4;
+  box-shadow: 0 2px 6px #7a1d1d;
 }
 
 /* === COMPONENTS === */
@@ -130,8 +148,8 @@ body {
 }
 
 .pepe .dropzone-active {
-  border: 2px solid #bada55;
-  box-shadow: 0 0 12px #bada55;
+  border: 2px solid #ff53e8;
+  box-shadow: 0 0 12px #8f1cac;
 }
 
 .dark .dropzone-active {

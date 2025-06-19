@@ -16,7 +16,7 @@ const config: Config = {
           DEFAULT: "#0f0",
         },
         pepe: {
-          DEFAULT: "#0c6b2d",
+          DEFAULT: "#ff53da",
         },
       },
       backgroundImage: {
