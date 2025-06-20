@@ -15,6 +15,8 @@ interface MemoryEntry {
 export const MemoryArchive = () => {
   const [log, setLog] = useState<MemoryEntry[]>([]);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortOption, setSortOption] = useState("dateDesc");
 
   useEffect(() => {
     const storedLog = localStorage.getItem("caelumMemoryLog");
@@ -51,6 +53,29 @@ export const MemoryArchive = () => {
     }
   };
 
+   const displayLog = [...log]
+    .filter((entry) =>
+      entry.fileName.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      switch (sortOption) {
+        case "dateAsc":
+          return (
+            new Date(a.uploadedAt).getTime() -
+            new Date(b.uploadedAt).getTime()
+          );
+        case "sizeDesc":
+          return parseInt(b.size) - parseInt(a.size);
+        case "sizeAsc":
+          return parseInt(a.size) - parseInt(b.size);
+        default:
+          return (
+            new Date(b.uploadedAt).getTime() -
+            new Date(a.uploadedAt).getTime()
+          );
+      }
+    });
+
   if (log.length === 0) {
     return (
       <div className="text-center text-gray-500 mt-10 text-sm italic">
@@ -64,9 +89,28 @@ export const MemoryArchive = () => {
       <h2 className="text-xl font-semibold text-center text-cyan-300 mb-4">
         🧠 Archived Memories
       </h2>
+       <div className="flex items-center justify-between gap-2 mb-4">
+        <input
+          type="text"
+          placeholder="Search memories..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="flex-grow px-2 py-1 rounded-md text-sm text-black"
+        />
+        <select
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
+          className="px-2 py-1 rounded-md text-sm text-black"
+        >
+          <option value="dateDesc">Date (newest)</option>
+          <option value="dateAsc">Date (oldest)</option>
+          <option value="sizeDesc">Size (largest)</option>
+          <option value="sizeAsc">Size (smallest)</option>
+        </select>
+      </div>
 
       <ul className="space-y-4 max-h-96 overflow-y-auto pr-2">
-        {log.map((entry) => (
+        {displayLog.map((entry) => (
           <MemoryCard
             key={entry.txId}
             entry={entry}
