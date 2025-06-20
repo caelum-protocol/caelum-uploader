@@ -297,7 +297,7 @@ useEffect(() => {
   useEffect(() => {
     const interval = setInterval(() => {
       const quote = forceWhisper || (archive.length > 0
-        ? (archive.slice(-12)[Math.floor(Math.random() * Math.min(12, archive.length))]?.name || "")
+        ? (archive.slice(-12)[Math.floor(Math.random() * Math.min(12, archive.length))]?.fileName || "")
         : quotes[Math.floor(Math.random() * quotes.length)]);
       setCurrentWhisper(quote);
       setFadeAlpha(0);
