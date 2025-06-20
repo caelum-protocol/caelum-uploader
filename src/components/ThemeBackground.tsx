@@ -3,19 +3,23 @@
 import { useEffect } from "react";
 import { useTheme } from "../context/ThemeContext";
 import dynamic from "next/dynamic";
+import { useMemory } from "@/context/MemoryContext";
 
 const MatrixRain = dynamic(() => import("@/components/MatrixRain").then(mod => mod.default), { ssr: false });
-const IrisBackground = dynamic(() => import("@/components/IrisBackground"), { ssr: false });
-const DarkScratchPad = dynamic(() => import("@/components/DarkScratchPad").then(mod => mod.default), { ssr: false });
+const IrisBackground = dynamic(() =>
+  import("@/components/IrisBackground").then(mod => mod.default as React.ComponentType<{
+    memoryCount: number;
+    memoryTrigger: boolean;
+    archive: any[];
+  }>)
+, { ssr: false });
 
-export const ThemeBackground = ({
-  memoryTrigger,
-  memoryCount,
-}: {
-  memoryTrigger: boolean;
-  memoryCount: number;
-}) => {
+const DarkScratchPad = dynamic(() => import("@/components/DarkScratchPad").then(mod => mod.default), { ssr: false });
+const PepeEffects = dynamic(() => import("@/components/PepeEffects").then(mod => mod.default), { ssr: false });
+
+export const ThemeBackground = () => {
   const { theme } = useTheme();
+  const { memoryTrigger, archive, setArchive } = useMemory();
 
   useEffect(() => {
     const body = document.body;
@@ -24,8 +28,9 @@ export const ThemeBackground = ({
   }, [theme]);
 
   if (theme === "matrix") return <MatrixRain />;
-  if (theme === "iris") return <IrisBackground memoryTrigger={memoryTrigger} memoryCount={memoryCount} />;
+  if (theme === "iris") return <IrisBackground memoryTrigger={memoryTrigger} memoryCount={archive.length} archive={archive} />;
   if (theme === "dark") return <DarkScratchPad />;
+  if (theme === "pepe") return <PepeEffects />;
 
   return null;
 };

@@ -63,11 +63,11 @@ body {
   background: radial-gradient(circle at top, #1a1a2e, #000000 70%);
   color: #e0d5ff;
   font-family: 'Geist', sans-serif;
-  --drop-border: #a78bfa;
+  --drop-border: #ebe4ff;
 }
 
 .iris .theme-card {
-  background-color: rgba(26, 1, 56, 0.5);
+  background-color: rgba(255, 255, 255, 0.205);
   @apply backdrop-blur-md;
 }
 @keyframes irisPulse {
@@ -85,17 +85,17 @@ body {
   animation: irisPulse 6s ease-in-out infinite;
 }
 .iris-core:hover {
-  box-shadow: 0 0 40px rgba(138, 43, 226, 0.6);
+  box-shadow: 0 0 40px rgba(245, 234, 255, 0.671);
   transform: scale(1.12);
   transition: all 0.3s ease;
 }
 /* === PEPE === */
 .pepe {
-  background-color: #ff4ed9;
+  background-color: #000000;
   background-image: url("/pepewide.png");
-  background-size: cover;
+  background-size: auto 90%;
   background-repeat: no-repeat;
-  background-position: center;
+  background-position: bottom center;
   background-attachment: fixed;
   color: #c42eff;
   font-family: "Comic Sans MS", cursive, sans-serif;
@@ -104,7 +104,7 @@ body {
 }
 
 .pepe .theme-card {
-  background-color: rgba(141, 74, 218, 0.8);
+  background-color: rgba(160, 82, 250, 0.171);
   @apply backdrop-blur border-[#ff53da] text-[#faffc4] shadow-md;
 }
 
@@ -119,10 +119,38 @@ body {
 }
 
 /* === COMPONENTS === */
+/* === THEME STRUCTURE === */
 .theme-card {
   @apply rounded-xl border p-4 sm:p-6 shadow-lg transition-all duration-300;
   border-color: var(--drop-border);
 }
+
+/* === LIGHT THEME === */
+.theme-light .theme-card {
+  background-color: #ffffff;
+  color: #222;
+  border-color: #e0e0e0;
+}
+
+/* === DARK THEME === */
+.dark .theme-card {
+  background-color: #111111;
+  background-image: radial-gradient(#222 1px, transparent 1px);
+  background-size: 4px 4px;
+  @apply backdrop-blur-sm border text-white shadow-md;
+
+  animation: rgbBorder 9s linear infinite;
+}
+
+/* === ANIMATIONS === */
+@keyframes rgbBorder {
+  0%   { border-color: #ff0055; }
+  25%  { border-color: #00eeff; }
+  50%  { border-color: #6aff00; }
+  75%  { border-color: #ffaa00; }
+  100% { border-color: #ff0055; }
+}
+
 
 /* === ANIMATIONS === */
 @keyframes glowPulse {
@@ -149,7 +177,7 @@ body {
 
 .pepe .dropzone-active {
   border: 2px solid #ff53e8;
-  box-shadow: 0 0 12px #8f1cac;
+  box-shadow: 0 0 12px #a11fc2;
 }
 
 .dark .dropzone-active {

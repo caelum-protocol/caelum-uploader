@@ -1,5 +1,5 @@
+// MatrixRain.tsx — Final Fixed Density Version (v1.0.1 with Layer Fix)
 "use client";
-
 import { useEffect, useRef } from "react";
 
 export default function MatrixRain() {
@@ -8,42 +8,62 @@ export default function MatrixRain() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const letters = "アァイィウヴエェオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモヤユヨラリルレロワヲン".split("");
 
-    const letters = "アァイィウヴエェオカガキギクグケゲコゴサ...".split("");
+    let width = window.innerWidth;
+    let height = window.innerHeight;
     const fontSize = 14;
-    const columns = canvas.width / fontSize;
-    const drops = Array(Math.floor(columns)).fill(1);
+    let columns = Math.floor(width / fontSize);
+    let drops = Array(columns).fill(1);
+
+    canvas.width = width;
+    canvas.height = height;
 
     const draw = () => {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillRect(0, 0, width, height);
       ctx.fillStyle = "#0F0";
       ctx.font = `${fontSize}px monospace`;
 
-      drops.forEach((_, i) => {
+      for (let i = 0; i < drops.length; i++) {
         const text = letters[Math.floor(Math.random() * letters.length)];
         ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+
+        if (drops[i] * fontSize > height && Math.random() > 0.975) {
           drops[i] = 0;
         }
+
         drops[i]++;
-      });
+      }
     };
 
     const interval = setInterval(draw, 33);
-    return () => clearInterval(interval);
+
+    const handleResize = () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+      columns = Math.floor(width / fontSize);
+      drops = Array(columns).fill(1);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   return (
     <canvas
       ref={canvasRef}
-      className="pointer-events-none fixed inset-0 z-0"
+      className="fixed top-0 left-0 w-full h-full z-[0] pointer-events-none"
+      style={{ backgroundColor: "black" }}
     />
   );
 }

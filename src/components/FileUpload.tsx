@@ -11,11 +11,15 @@ import Dropzone from "@/components/Dropzone";
 import { UploadButton } from "@/components/UploadButton";
 import { StatusIndicator } from "@/components/StatusIndicator";
 
+import { useMemory } from "@/context/MemoryContext";
+
 export const FileUpload = () => {
   const [file, setFile] = useState<File | null>(null);
   const [uploadStatus, setUploadStatus] = useState<string>("");
   const [uploadCost, setUploadCost] = useState<string>("");
   const [txId, setTxId] = useState<string>("");
+
+  const { setArchive, triggerMemory } = useMemory();
 
   const getIrys = async () => {
     // @ts-ignore
@@ -85,6 +89,10 @@ export const FileUpload = () => {
       const history = JSON.parse(localStorage.getItem("caelumMemoryLog") || "[]");
       history.push(memory);
       localStorage.setItem("caelumMemoryLog", JSON.stringify(history));
+
+      // 🌌 Update shared memory + trigger iris
+      setArchive(prev => [...prev, memory]);
+      triggerMemory();
     } catch (e) {
       console.error(e);
       setUploadStatus(`Error: ${(e as Error).message}`);

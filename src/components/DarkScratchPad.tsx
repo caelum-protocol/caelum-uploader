@@ -45,7 +45,7 @@ export default function DarkScratchPad() {
 
     let drawing = false;
 
-    overlayCtx.fillStyle = "rgba(255, 255, 255, 0.15)";
+    overlayCtx.fillStyle = "rgba(255, 255, 255, 0.28)";
     overlayCtx.font = "24px 'Courier New', monospace";
     overlayCtx.textAlign = "center";
     overlayCtx.textBaseline = "middle";

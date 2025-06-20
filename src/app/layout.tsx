@@ -9,6 +9,7 @@ import { ThemeClientWrapper } from "@/components/ThemeClientWrapper";
 import { Header } from "@/components/Header";
 import { ThemeBackground } from "@/components/ThemeBackground";
 import Script from "next/script";
+import { MemoryProvider } from "@/context/MemoryContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,16 +26,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className={inter.className} suppressHydrationWarning>
         <ThemeProvider>
-          <ThemeClientWrapper>
-            <Web3Provider>
-              {/* Background layer (e.g., animated canvas) */}
-              <ThemeBackground memoryCount={0} memoryTrigger={false} />
-              <Header />
-              <Toaster position="top-right" />
-              <LoadingOverlay />
-              {children}
-            </Web3Provider>
-          </ThemeClientWrapper>
+          <MemoryProvider>
+            <ThemeClientWrapper>
+              <Web3Provider>
+                <ThemeBackground />
+                <Header />
+                <Toaster position="top-right" />
+                <LoadingOverlay />
+                {children}
+              </Web3Provider>
+            </ThemeClientWrapper>
+          </MemoryProvider>
         </ThemeProvider>
       </body>
     </html>
