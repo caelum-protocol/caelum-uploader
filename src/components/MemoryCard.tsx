@@ -1,15 +1,8 @@
 "use client";
 
 import formatBytes from "../utils/formatBytes";
-
-interface MemoryEntry {
-  fileName: string;
-  size: string;
-  type: string;
-  uploadedAt: string;
-  txId: string;
-  url: string;
-}
+import getFileIcon from "../utils/getFileIcon";
+import type { MemoryEntry } from "@/types/memory";
 
 interface MemoryCardProps {
   entry: MemoryEntry;
@@ -30,7 +23,9 @@ export default function MemoryCard({
     >
       <div className="flex justify-between items-start">
         <div>
-          <p className="font-medium break-all">📁 {entry.fileName}</p>
+           <p className="font-medium break-all">
+            {getFileIcon(entry.type)} {entry.fileName}
+          </p>
           <p className="text-sm opacity-80">
             {formatBytes(parseInt(entry.size))} — {entry.type}
           </p>

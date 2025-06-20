@@ -1,24 +1,29 @@
 "use client";
 
 import React, { createContext, useContext, useState } from "react";
+import type { MemoryEntry } from "@/types/memory";
 
 type MemoryContextType = {
-  archive: any[];
-  setArchive: React.Dispatch<React.SetStateAction<any[]>>;
+  archive: MemoryEntry[];
+  setArchive: React.Dispatch<React.SetStateAction<MemoryEntry[]>>;
   memoryTrigger: boolean;
   triggerMemory: () => void;
 };
 
 const MemoryContext = createContext<MemoryContextType | undefined>(undefined);
 
-export const MemoryProvider = ({ children }: { children: React.ReactNode }) => {
-  const [archive, setArchive] = useState<any[]>(() => {
-  if (typeof window !== "undefined") {
-    const saved = localStorage.getItem("caelumMemoryLog");
-    return saved ? JSON.parse(saved) : [];
-  }
-  return [];
-});
+type MemoryProviderProps = {
+  children: React.ReactNode;
+};
+
+export const MemoryProvider: React.FC<MemoryProviderProps> = ({ children }) => {
+  const [archive, setArchive] = useState<MemoryEntry[]>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("caelumMemoryLog");
+      return saved ? (JSON.parse(saved) as MemoryEntry[]) : [];
+    }
+    return [];
+  });
 
   const [memoryTrigger, setMemoryTrigger] = useState(false);
 

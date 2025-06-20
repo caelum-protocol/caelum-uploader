@@ -139,7 +139,7 @@ body {
   background-size: 4px 4px;
   @apply backdrop-blur-sm border text-white shadow-md;
 
-  animation: rgbBorder 9s linear infinite;
+  animation: rgbBorder 6s linear infinite;
 }
 
 /* === ANIMATIONS === */

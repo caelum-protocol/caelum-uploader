@@ -12,6 +12,7 @@ import { UploadButton } from "@/components/UploadButton";
 import { StatusIndicator } from "@/components/StatusIndicator";
 
 import { useMemory } from "@/context/MemoryContext";
+import type { MemoryEntry } from "@/types/memory";
 
 export const FileUpload = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -77,7 +78,7 @@ export const FileUpload = () => {
       setUploadStatus("Upload successful!");
       toast.success("Upload complete!");
 
-      const memory = {
+      const memory: MemoryEntry = {
         fileName: file.name,
         size: file.size.toString(),
         type: file.type,
@@ -86,7 +87,9 @@ export const FileUpload = () => {
         url: `https://gateway.irys.xyz/${receipt.id}`,
       };
 
-      const history = JSON.parse(localStorage.getItem("caelumMemoryLog") || "[]");
+         const history: MemoryEntry[] = JSON.parse(
+        localStorage.getItem("caelumMemoryLog") || "[]"
+      );
       history.push(memory);
       localStorage.setItem("caelumMemoryLog", JSON.stringify(history));
 

@@ -1,8 +1,9 @@
 // Iris v1.5.7.7 — The Spirit Set: Memory Echo Shards + Star Pulse + Inward Drift
 "use client";
 import { useEffect, useRef, useState } from "react";
+import type { MemoryEntry } from "@/types/memory";
 
-export default function IrisBackground({ memoryCount, memoryTrigger, archive }: { memoryCount: number; memoryTrigger: boolean; archive: any[] }) {
+export default function IrisBackground({ memoryCount, memoryTrigger, archive }: { memoryCount: number; memoryTrigger: boolean; archive: MemoryEntry[] }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [currentWhisper, setCurrentWhisper] = useState("Silence is where thoughts bloom.");
   const [fadeAlpha, setFadeAlpha] = useState(1);

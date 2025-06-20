@@ -2,17 +2,12 @@
 
 import { useEffect, useState } from "react";
 import MemoryCard from "./MemoryCard";
-
-interface MemoryEntry {
-  fileName: string;
-  size: string;
-  type: string;
-  uploadedAt: string;
-  txId: string;
-  url: string;
-}
+import { inputStylesByTheme, ThemeName } from "@/themeStyles";
+import { useTheme } from "@/context/ThemeContext"; // adjust path as needed
+import type { MemoryEntry } from "@/types/memory";
 
 export const MemoryArchive = () => {
+  const { theme } = useTheme();
   const [log, setLog] = useState<MemoryEntry[]>([]);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -95,12 +90,13 @@ export const MemoryArchive = () => {
           placeholder="Search memories..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="flex-grow px-2 py-1 rounded-md text-sm text-black"
+          className={`px-4 py-2 rounded border ${inputStylesByTheme[theme as ThemeName] || "bg-white text-black border-gray-300"}`}
+
         />
         <select
           value={sortOption}
           onChange={(e) => setSortOption(e.target.value)}
-          className="px-2 py-1 rounded-md text-sm text-black"
+          className={`px-2 py-2 rounded border ml-2 ${inputStylesByTheme[theme as ThemeName] || "bg-white text-black border-gray-300"}`}
         >
           <option value="dateDesc">Date (newest)</option>
           <option value="dateAsc">Date (oldest)</option>
