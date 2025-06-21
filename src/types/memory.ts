@@ -5,4 +5,5 @@ export interface MemoryEntry {
   uploadedAt: string;
   txId: string;
   url: string;
+  isNew?: boolean;
 }

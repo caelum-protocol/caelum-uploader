@@ -12,7 +12,7 @@ import JsonPreviewModal from "./JsonPreviewModal";
 interface MemoryCardProps {
   entry: MemoryEntry;
   onCopy: (url: string, txId: string) => void;
-  onDelete: (txId: string) => void;
+  onDelete?: (txId: string) => void;
   copied: boolean;
   isNew?: boolean;
 }
@@ -24,8 +24,10 @@ export default function MemoryCard({
   copied,
   isNew,
 }: MemoryCardProps) {
-   const { theme } = useTheme();
-  const [showJson, setShowJson] = useState(false);
+  const { theme } = useTheme();
+  const [showJson, setShowJson] = useState(
+    isNew && entry.type === "application/json"
+  );
 
   const glowMap: Record<string, string> = {
     matrix: "#00ff00",
@@ -34,7 +36,8 @@ export default function MemoryCard({
     dark: "#ffffff",
   };
 
-  const glowColor = glowMap[theme] || "#ffffff";  
+  const glowColor = glowMap[theme] || "#ffffff";
+
   return (
     <motion.li
       initial={false}
@@ -50,11 +53,17 @@ export default function MemoryCard({
           : { boxShadow: "" }
       }
       transition={{ duration: isNew ? 2 : 0 }}
-      className="rounded-lg p-4 border shadow transition-all theme-card"
+      className="relative rounded-lg p-4 border shadow transition-all theme-card"
     >
+      {isNew && (
+        <span className="absolute -top-2 -left-2 bg-yellow-500 text-black text-xs px-2 py-0.5 rounded">
+          You uploaded this!
+        </span>
+      )}
+
       <div className="flex justify-between items-start">
         <div>
-           <p className="font-medium break-all">
+          <p className="font-medium break-all">
             {getFileIcon(entry.type)} {entry.fileName}
           </p>
           <p className="text-sm opacity-80">
@@ -64,14 +73,17 @@ export default function MemoryCard({
             {new Date(entry.uploadedAt).toLocaleString()}
           </p>
         </div>
-        <button
-          onClick={() => onDelete(entry.txId)}
-          className="text-red-500 text-xs hover:underline ml-4 flex-shrink-0"
-        >
-          Delete
-        </button>
+        {onDelete && (
+          <button
+            onClick={() => onDelete(entry.txId)}
+            className="text-red-500 text-xs hover:underline ml-4 flex-shrink-0"
+          >
+            Delete
+          </button>
+        )}
       </div>
-      <div className="mt-3 flex items-center space-x-4">
+
+      <div className="mt-3 flex flex-wrap items-center gap-4">
         {entry.type === "application/json" ? (
           <>
             <button
@@ -116,6 +128,15 @@ export default function MemoryCard({
         >
           Mint to Shard
         </button>
+
+        {entry.txId && (
+          <a
+            href={`/shard/${entry.txId}`}
+            className="text-purple-300 text-sm hover:underline"
+          >
+            View Shard
+          </a>
+        )}
 
         {showJson && (
           <JsonPreviewModal url={entry.url} onClose={() => setShowJson(false)} />

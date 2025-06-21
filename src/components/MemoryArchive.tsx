@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import MemoryCard from "./MemoryCard";
 import { inputStylesByTheme, ThemeName } from "@/themeStyles";
 import { useTheme } from "@/context/ThemeContext"; // adjust path as needed
-import type { MemoryEntry } from "@/types/memory";
 import { useMemory } from "@/context/MemoryContext";
 
 export const MemoryArchive = () => {
@@ -13,6 +12,7 @@ export const MemoryArchive = () => {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("dateDesc");
+  const listRef = useRef<HTMLUListElement>(null);
 
   const handleCopy = (url: string, txId: string) => {
     navigator.clipboard.writeText(url);
@@ -56,6 +56,16 @@ export const MemoryArchive = () => {
       }
     });
 
+  // When a new memory is present, scroll it into view
+  useEffect(() => {
+    if (newId && listRef.current) {
+      const el = listRef.current.querySelector(`#mem-${newId}`);
+      if (el) {
+        (el as HTMLElement).scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [newId]);
+
   if (log.length === 0) {
     return (
       <div className="text-center text-gray-500 mt-10 text-sm italic">
@@ -90,7 +100,10 @@ export const MemoryArchive = () => {
         </select>
       </div>
 
-      <ul className="space-y-4 max-h-96 overflow-y-auto pr-2">
+      <ul
+        className="space-y-4 max-h-96 overflow-y-auto pr-2"
+        ref={listRef}
+      >
         {displayLog.map((entry) => (
           <MemoryCard
             key={entry.txId}
@@ -98,7 +111,7 @@ export const MemoryArchive = () => {
             onCopy={handleCopy}
             onDelete={handleDelete}
             copied={copiedId === entry.txId}
-            isNew={newId === entry.txId}
+            isNew={entry.isNew || newId === entry.txId}
           />
         ))}
       </ul>

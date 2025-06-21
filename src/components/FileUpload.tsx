@@ -85,6 +85,8 @@ export const FileUpload = () => {
         uploadedAt: new Date().toISOString(),
         txId: receipt.id,
         url: `https://gateway.irys.xyz/${receipt.id}`,
+        // mark as new so we can highlight on reload
+        isNew: true,
       };
 
          const history: MemoryEntry[] = JSON.parse(

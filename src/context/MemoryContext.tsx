@@ -27,7 +27,40 @@ export const MemoryProvider: React.FC<MemoryProviderProps> = ({ children }) => {
   });
 
   const [memoryTrigger, setMemoryTrigger] = useState(false);
-  const [newId, setNewId] = useState<string | null>(null);
+  const [newId, setNewId] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("caelumMemoryLog");
+      if (saved) {
+        const parsed: MemoryEntry[] = JSON.parse(saved);
+        const latest = parsed.reverse().find((e) => e.isNew);
+        return latest ? latest.txId : null;
+      }
+    }
+    return null;
+  });
+
+  // When initialized with a new memory, clear the highlight after a few seconds
+  React.useEffect(() => {
+    if (newId) {
+      const timer = setTimeout(() => setNewId(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [newId]);
+
+  // Remove isNew flag once highlight ends
+  React.useEffect(() => {
+    if (newId === null) {
+      const saved = localStorage.getItem("caelumMemoryLog");
+      if (saved) {
+        const parsed: MemoryEntry[] = JSON.parse(saved).map((e: MemoryEntry) => ({
+          ...e,
+          isNew: false,
+        }));
+        localStorage.setItem("caelumMemoryLog", JSON.stringify(parsed));
+        setArchive(parsed);
+      }
+    }
+  }, [newId]);
 
   const triggerMemory = (id?: string) => {
     setMemoryTrigger(true);
