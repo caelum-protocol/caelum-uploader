@@ -2,21 +2,27 @@
 
 import { useEffect, useState } from "react";
 
-const LoadingOverlay = () => {
+export default function LoadingOverlay() {
   const [visible, setVisible] = useState(true);
+  const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      setVisible(false);
-    }, 1000); // Feel free to change the delay if needed
+    const timer = setTimeout(() => {
+      setFadeOut(true);
+      setTimeout(() => setVisible(false), 500); // delay removal after fade
+    }, 1000); // show for 1 second
 
-    return () => clearTimeout(timeout);
+    return () => clearTimeout(timer);
   }, []);
 
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-[999] bg-black flex flex-col justify-center items-center">
+    <div
+      className={`fixed inset-0 z-[9999] flex flex-col justify-center items-center transition-opacity duration-500 ${
+        fadeOut ? "opacity-0" : "opacity-100"
+      } bg-black`}
+    >
       <img
         src="/CaelumLogo.png"
         alt="Loading..."
@@ -24,6 +30,4 @@ const LoadingOverlay = () => {
       />
     </div>
   );
-};
-
-export default LoadingOverlay;
+}

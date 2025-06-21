@@ -66,18 +66,18 @@ export const MemoryArchive = () => {
         🧠 Archived Memories
       </h2>
 
-      <div className="flex items-center justify-between gap-2 mb-4">
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-4">
         <input
           type="text"
           placeholder="Search memories..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className={`px-4 py-2 rounded border ${inputStylesByTheme[theme as ThemeName] || "bg-white text-black border-gray-300"}`}
+          className={`px-4 py-2 rounded border w-full sm:w-64 ${inputStylesByTheme[theme as ThemeName] || "bg-white text-black border-gray-300"}`}
         />
         <select
           value={sortOption}
           onChange={(e) => setSortOption(e.target.value)}
-          className={`px-2 py-2 rounded border ml-2 ${inputStylesByTheme[theme as ThemeName] || "bg-white text-black border-gray-300"}`}
+          className={`px-2 py-2 rounded border w-full sm:w-48 ${inputStylesByTheme[theme as ThemeName] || "bg-white text-black border-gray-300"}`}
         >
           <option value="dateDesc">Date (newest)</option>
           <option value="dateAsc">Date (oldest)</option>

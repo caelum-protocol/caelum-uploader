@@ -15,6 +15,7 @@ interface MemoryCardProps {
   onDelete?: (txId: string) => void;
   copied: boolean;
   isNew?: boolean;
+  inShardView?: boolean;
 }
 
 export default function MemoryCard({
@@ -23,6 +24,7 @@ export default function MemoryCard({
   onDelete,
   copied,
   isNew,
+  inShardView = false,
 }: MemoryCardProps) {
   const { theme } = useTheme();
   const [showJson, setShowJson] = useState(
@@ -39,116 +41,121 @@ export default function MemoryCard({
   const glowColor = glowMap[theme] || "#ffffff";
 
   return (
-    <motion.li
-      initial={{ y: 20, opacity: 0, boxShadow: "0px 0px 0px rgba(0,0,0,0)" }}
-      animate={{
-        y: 0,
-        opacity: 1,
-        boxShadow: isNew
-          ? [
-              `0 0 0px ${glowColor}`,
-              `0 0 12px ${glowColor}`,
-              `0 0 0px ${glowColor}`,
-            ]
-          : "0px 0px 0px rgba(0,0,0,0)",
-      }}
-      exit={{ y: -20, opacity: 0 }}
-      transition={{ duration: isNew ? 2 : 0.3 }}
-      layout
-      className="relative rounded-lg p-4 border shadow transition-all theme-card"
-      id={`mem-${entry.txId}`}
-    >
-      {isNew && (
-        <span className="absolute -top-2 -left-2 bg-yellow-500 text-black text-xs px-2 py-0.5 rounded">
-          You uploaded this!
-        </span>
-      )}
+  <motion.li
+    initial={{ y: 20, opacity: 0, boxShadow: "0px 0px 0px rgba(0,0,0,0)" }}
+    animate={{
+      y: 0,
+      opacity: 1,
+      boxShadow: isNew
+        ? [
+            `0 0 0px ${glowColor}`,
+            `0 0 12px ${glowColor}`,
+            `0 0 0px ${glowColor}`,
+          ]
+        : "0px 0px 0px rgba(0,0,0,0)",
+    }}
+    exit={{ y: -20, opacity: 0 }}
+    transition={{ duration: isNew ? 2 : 0.3 }}
+    layout
+    className="relative rounded-lg p-4 border shadow transition-all theme-card"
+    id={`mem-${entry.txId}`}
+  >
+    {isNew && (
+      <span className="absolute -top-2 -left-2 bg-yellow-500 text-black text-xs px-2 py-0.5 rounded">
+        You uploaded this!
+      </span>
+    )}
 
-      <div className="flex justify-between items-start">
-        <div>
-          <p className="font-medium break-all">
-            {getFileIcon(entry.type)} {entry.fileName}
-          </p>
-          <p className="text-sm opacity-80">
-            {formatBytes(parseInt(entry.size))} — {entry.type}
-          </p>
-          <p className="text-xs opacity-50 mt-1">
-            {new Date(entry.uploadedAt).toLocaleString()}
-          </p>
-        </div>
-        {onDelete && (
-          <button
-            onClick={() => onDelete(entry.txId)}
-            className="text-red-500 text-xs hover:underline ml-4 flex-shrink-0"
-          >
-            Delete
-          </button>
-        )}
+    <div className="flex justify-between items-start">
+      <div>
+        <p className="font-medium break-all">
+          {getFileIcon(entry.type)} {entry.fileName}
+        </p>
+        <p className="text-sm opacity-80">
+          {formatBytes(parseInt(entry.size))} — {entry.type}
+        </p>
+        <p className="text-xs opacity-50 mt-1">
+          {new Date(entry.uploadedAt).toLocaleString()}
+        </p>
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center gap-4">
-        {entry.type === "application/json" ? (
-          <>
-            <button
-              onClick={() => setShowJson(true)}
-              className="text-blue-400 text-sm hover:underline"
-            >
-              Preview
-            </button>
-            <a
-              href={entry.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-cyan-400 text-sm hover:underline"
-            >
-              View Raw
-            </a>
-          </>
-        ) : (
+      {!inShardView && onDelete && (
+        <button
+          onClick={() => onDelete(entry.txId)}
+          className="text-red-500 text-xs hover:underline ml-4 flex-shrink-0"
+        >
+          Delete
+        </button>
+      )}
+    </div>
+
+    <div className="mt-3 flex flex-wrap items-center gap-4">
+      {entry.type === "application/json" ? (
+        <>
+          <button
+            onClick={() => setShowJson(true)}
+            className="text-blue-400 text-sm hover:underline"
+          >
+            Preview
+          </button>
           <a
             href={entry.url}
             target="_blank"
             rel="noopener noreferrer"
             className="text-cyan-400 text-sm hover:underline"
           >
-            View Memory
+            View Raw
           </a>
-        )}
-
-        <button
-          onClick={() => onCopy(entry.url, entry.txId)}
-          className="text-yellow-400 text-sm hover:underline"
+        </>
+      ) : (
+        <a
+          href={entry.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-cyan-400 text-sm hover:underline"
         >
-          {copied ? "Copied!" : "Copy Link"}
-        </button>
+          View Memory
+        </a>
+      )}
 
-        <button
-          disabled={isNew}
-          onClick={async () => {
-            if (isNew) return;
-            const res = await mintToShard(entry);
-            alert(`✅ Mint simulated!\nTx ID: ${res.txId}`);
-          }}
-          className={`text-purple-400 text-sm hover:underline ${
-            isNew ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-        >
-          Mint to Shard
-        </button>
-
-        {entry.txId && (
-          <a
-            href={`/shard/${entry.txId}`}
-            className="text-purple-300 text-sm hover:underline"
+      {!inShardView && (
+        <>
+          <button
+            onClick={() => onCopy(entry.url, entry.txId)}
+            className="text-yellow-400 text-sm hover:underline"
           >
-            View Shard
-          </a>
-        )}
+            {copied ? "Copied!" : "Copy Link"}
+          </button>
 
-        {showJson && (
-          <JsonPreviewModal url={entry.url} onClose={() => setShowJson(false)} />
-        )}
-      </div>
-    </motion.li>
-  );
+          <button
+            disabled={isNew}
+            onClick={async () => {
+              if (isNew) return;
+              const res = await mintToShard(entry);
+              alert(`✅ Mint simulated!\nTx ID: ${res.txId}`);
+            }}
+            className={`text-purple-400 text-sm hover:underline ${
+              isNew ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+          >
+            Mint to Shard
+          </button>
+
+          {entry.txId && (
+            <a
+              href={`/shard/${entry.txId}`}
+              className="text-purple-300 text-sm hover:underline"
+            >
+              View Shard
+            </a>
+          )}
+        </>
+      )}
+
+      {showJson && (
+        <JsonPreviewModal url={entry.url} onClose={() => setShowJson(false)} />
+      )}
+    </div>
+  </motion.li>
+);
 }

@@ -1,15 +1,8 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
-import { Web3Provider } from "@/providers/web3";
-import { Toaster } from "react-hot-toast";
-import LoadingOverlay from "@/components/LoadingOverlay";
-import { ThemeProvider } from "@/context/ThemeContext";
-import { ThemeClientWrapper } from "@/components/ThemeClientWrapper";
-import { Header } from "@/components/Header";
-import { ThemeBackground } from "@/components/ThemeBackground";
+import { Inter } from "next/font/google";
+import type { Metadata } from "next";
 import Script from "next/script";
-import { MemoryProvider } from "@/context/MemoryContext";
+import LayoutClient from "./layoutClient";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,19 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Script src="/theme-loader.js" strategy="beforeInteractive" />
       </head>
       <body className={inter.className} suppressHydrationWarning>
-        <ThemeProvider>
-          <MemoryProvider>
-            <ThemeClientWrapper>
-              <Web3Provider>
-                <ThemeBackground />
-                <Header />
-                <Toaster position="top-right" />
-                <LoadingOverlay />
-                {children}
-              </Web3Provider>
-            </ThemeClientWrapper>
-          </MemoryProvider>
-        </ThemeProvider>
+        <LayoutClient>{children}</LayoutClient>
       </body>
     </html>
   );
