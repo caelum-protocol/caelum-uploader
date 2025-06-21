@@ -7,7 +7,8 @@ type MemoryContextType = {
   archive: MemoryEntry[];
   setArchive: React.Dispatch<React.SetStateAction<MemoryEntry[]>>;
   memoryTrigger: boolean;
-  triggerMemory: () => void;
+  triggerMemory: (id?: string) => void;
+  newId: string | null;
 };
 
 const MemoryContext = createContext<MemoryContextType | undefined>(undefined);
@@ -26,14 +27,19 @@ export const MemoryProvider: React.FC<MemoryProviderProps> = ({ children }) => {
   });
 
   const [memoryTrigger, setMemoryTrigger] = useState(false);
+  const [newId, setNewId] = useState<string | null>(null);
 
-  const triggerMemory = () => {
+  const triggerMemory = (id?: string) => {
     setMemoryTrigger(true);
+    if (id) setNewId(id)
     setTimeout(() => setMemoryTrigger(false), 500); // brief pulse
+    if (id) {
+      setTimeout(() => setNewId(null), 4000); // remove highlight after a bit
+    }
   };
 
   return (
-    <MemoryContext.Provider value={{ archive, setArchive, memoryTrigger, triggerMemory }}>
+     <MemoryContext.Provider value={{ archive, setArchive, memoryTrigger, triggerMemory, newId }}>
       {children}
     </MemoryContext.Provider>
   );

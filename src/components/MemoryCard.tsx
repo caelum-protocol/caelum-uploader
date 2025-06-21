@@ -4,12 +4,17 @@ import formatBytes from "../utils/formatBytes";
 import getFileIcon from "../utils/getFileIcon";
 import type { MemoryEntry } from "@/types/memory";
 import mintToShard from "@/utils/mintToShard";
+import { motion } from "framer-motion";
+import { useTheme } from "@/context/ThemeContext";
+import { useState } from "react";
+import JsonPreviewModal from "./JsonPreviewModal";
 
 interface MemoryCardProps {
   entry: MemoryEntry;
   onCopy: (url: string, txId: string) => void;
   onDelete: (txId: string) => void;
   copied: boolean;
+  isNew?: boolean;
 }
 
 export default function MemoryCard({
@@ -17,9 +22,34 @@ export default function MemoryCard({
   onCopy,
   onDelete,
   copied,
+  isNew,
 }: MemoryCardProps) {
+   const { theme } = useTheme();
+  const [showJson, setShowJson] = useState(false);
+
+  const glowMap: Record<string, string> = {
+    matrix: "#00ff00",
+    iris: "#a78bfa",
+    pepe: "#ff53da",
+    dark: "#ffffff",
+  };
+
+  const glowColor = glowMap[theme] || "#ffffff";  
   return (
-    <li
+    <motion.li
+      initial={false}
+      animate={
+        isNew
+          ? {
+              boxShadow: [
+                `0 0 0px ${glowColor}`,
+                `0 0 12px ${glowColor}`,
+                `0 0 0px ${glowColor}`,
+              ],
+            }
+          : { boxShadow: "" }
+      }
+      transition={{ duration: isNew ? 2 : 0 }}
       className="rounded-lg p-4 border shadow transition-all theme-card"
     >
       <div className="flex justify-between items-start">
@@ -42,32 +72,55 @@ export default function MemoryCard({
         </button>
       </div>
       <div className="mt-3 flex items-center space-x-4">
-        <a
+        {entry.type === "application/json" ? (
+          <>
+            <button
+              onClick={() => setShowJson(true)}
+              className="text-blue-400 text-sm hover:underline"
+            >
+              Preview
+            </button>
+            <a
+              href={entry.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-cyan-400 text-sm hover:underline"
+            >
+              View Raw
+            </a>
+          </>
+        ) : (
+          <a
             href={entry.url}
             target="_blank"
             rel="noopener noreferrer"
             className="text-cyan-400 text-sm hover:underline"
-        >
+          >
             View Memory
-        </a>
+          </a>
+        )}
 
         <button
-            onClick={() => onCopy(entry.url, entry.txId)}
-            className="text-yellow-400 text-sm hover:underline"
+          onClick={() => onCopy(entry.url, entry.txId)}
+          className="text-yellow-400 text-sm hover:underline"
         >
-            {copied ? "Copied!" : "Copy Link"}
+          {copied ? "Copied!" : "Copy Link"}
         </button>
 
         <button
-            onClick={async () => {
-                const res = await mintToShard(entry);
-                alert(`✅ Mint simulated!\nTx ID: ${res.txId}`);
-            }}
-            className="text-purple-400 text-sm hover:underline"
+          onClick={async () => {
+            const res = await mintToShard(entry);
+            alert(`✅ Mint simulated!\nTx ID: ${res.txId}`);
+          }}
+          className="text-purple-400 text-sm hover:underline"
         >
-            Mint to Shard
+          Mint to Shard
         </button>
-    </div>
-    </li>
+
+        {showJson && (
+          <JsonPreviewModal url={entry.url} onClose={() => setShowJson(false)} />
+        )}
+      </div>
+    </motion.li>
   );
 }

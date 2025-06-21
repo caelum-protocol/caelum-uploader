@@ -1,33 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import MemoryCard from "./MemoryCard";
 import { inputStylesByTheme, ThemeName } from "@/themeStyles";
 import { useTheme } from "@/context/ThemeContext"; // adjust path as needed
 import type { MemoryEntry } from "@/types/memory";
+import { useMemory } from "@/context/MemoryContext";
 
 export const MemoryArchive = () => {
   const { theme } = useTheme();
-  const [log, setLog] = useState<MemoryEntry[]>([]);
+  const { archive: log, setArchive, newId } = useMemory();
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("dateDesc");
-
-  useEffect(() => {
-    const storedLog = localStorage.getItem("caelumMemoryLog");
-    if (storedLog) {
-      try {
-        const parsed = JSON.parse(storedLog);
-        parsed.sort(
-          (a: MemoryEntry, b: MemoryEntry) =>
-            new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
-        );
-        setLog(parsed);
-      } catch (err) {
-        console.error("Failed to parse memory log:", err);
-      }
-    }
-  }, []);
 
   const handleCopy = (url: string, txId: string) => {
     navigator.clipboard.writeText(url);
@@ -38,13 +23,13 @@ export const MemoryArchive = () => {
   const handleDelete = (txIdToDelete: string) => {
     const updatedLog = log.filter((e) => e.txId !== txIdToDelete);
     localStorage.setItem("caelumMemoryLog", JSON.stringify(updatedLog));
-    setLog(updatedLog);
+    setArchive(updatedLog);
   };
 
   const handleClearAll = () => {
     if (confirm("Are you sure you want to clear all archived memories?")) {
       localStorage.removeItem("caelumMemoryLog");
-      setLog([]);
+      setArchive([]);
     }
   };
 
@@ -113,6 +98,7 @@ export const MemoryArchive = () => {
             onCopy={handleCopy}
             onDelete={handleDelete}
             copied={copiedId === entry.txId}
+            isNew={newId === entry.txId}
           />
         ))}
       </ul>

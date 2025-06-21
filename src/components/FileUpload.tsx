@@ -95,7 +95,7 @@ export const FileUpload = () => {
 
       // 🌌 Update shared memory + trigger iris
       setArchive(prev => [...prev, memory]);
-      triggerMemory();
+      triggerMemory(receipt.id);
     } catch (e) {
       console.error(e);
       setUploadStatus(`Error: ${(e as Error).message}`);
