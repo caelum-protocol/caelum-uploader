@@ -40,20 +40,23 @@ export default function MemoryCard({
 
   return (
     <motion.li
-      initial={false}
-      animate={
-        isNew
-          ? {
-              boxShadow: [
-                `0 0 0px ${glowColor}`,
-                `0 0 12px ${glowColor}`,
-                `0 0 0px ${glowColor}`,
-              ],
-            }
-          : { boxShadow: "" }
-      }
-      transition={{ duration: isNew ? 2 : 0 }}
+      initial={{ y: 20, opacity: 0, boxShadow: "0px 0px 0px rgba(0,0,0,0)" }}
+      animate={{
+        y: 0,
+        opacity: 1,
+        boxShadow: isNew
+          ? [
+              `0 0 0px ${glowColor}`,
+              `0 0 12px ${glowColor}`,
+              `0 0 0px ${glowColor}`,
+            ]
+          : "0px 0px 0px rgba(0,0,0,0)",
+      }}
+      exit={{ y: -20, opacity: 0 }}
+      transition={{ duration: isNew ? 2 : 0.3 }}
+      layout
       className="relative rounded-lg p-4 border shadow transition-all theme-card"
+      id={`mem-${entry.txId}`}
     >
       {isNew && (
         <span className="absolute -top-2 -left-2 bg-yellow-500 text-black text-xs px-2 py-0.5 rounded">
@@ -120,11 +123,15 @@ export default function MemoryCard({
         </button>
 
         <button
+          disabled={isNew}
           onClick={async () => {
+            if (isNew) return;
             const res = await mintToShard(entry);
             alert(`✅ Mint simulated!\nTx ID: ${res.txId}`);
           }}
-          className="text-purple-400 text-sm hover:underline"
+          className={`text-purple-400 text-sm hover:underline ${
+            isNew ? "opacity-50 cursor-not-allowed" : ""
+          }`}
         >
           Mint to Shard
         </button>

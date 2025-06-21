@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { CheckCircle } from "lucide-react";
 import { WebIrys } from "@irys/sdk";
 import { providers } from "ethers";
 import { Buffer } from "buffer";
@@ -19,6 +21,7 @@ export const FileUpload = () => {
   const [uploadStatus, setUploadStatus] = useState<string>("");
   const [uploadCost, setUploadCost] = useState<string>("");
   const [txId, setTxId] = useState<string>("");
+  const [showCheck, setShowCheck] = useState(false);
 
   const { setArchive, triggerMemory } = useMemory();
 
@@ -76,6 +79,8 @@ export const FileUpload = () => {
 
       setTxId(receipt.id);
       setUploadStatus("Upload successful!");
+      setShowCheck(true);
+      setTimeout(() => setShowCheck(false), 1200);
       toast.success("Upload complete!");
 
       const memory: MemoryEntry = {
@@ -106,8 +111,21 @@ export const FileUpload = () => {
   };
 
   return (
-    <div>
+    <div className="relative">
       <Dropzone onDrop={onDrop} />
+
+      <AnimatePresence>
+        {showCheck && (
+          <motion.div
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            className="absolute inset-0 flex items-center justify-center pointer-events-none"
+          >
+            <CheckCircle className="w-16 h-16 text-green-400" />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {file && (
         <div className="mt-6 space-y-4 max-w-xl mx-auto text-white">
