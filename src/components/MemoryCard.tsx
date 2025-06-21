@@ -3,6 +3,7 @@
 import formatBytes from "../utils/formatBytes";
 import getFileIcon from "../utils/getFileIcon";
 import type { MemoryEntry } from "@/types/memory";
+import mintToShard from "@/utils/mintToShard";
 
 interface MemoryCardProps {
   entry: MemoryEntry;
@@ -42,20 +43,31 @@ export default function MemoryCard({
       </div>
       <div className="mt-3 flex items-center space-x-4">
         <a
-          href={entry.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-cyan-400 text-sm hover:underline"
+            href={entry.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-cyan-400 text-sm hover:underline"
         >
-          View Memory
+            View Memory
         </a>
+
         <button
-          onClick={() => onCopy(entry.url, entry.txId)}
-          className="text-yellow-400 text-sm hover:underline"
+            onClick={() => onCopy(entry.url, entry.txId)}
+            className="text-yellow-400 text-sm hover:underline"
         >
-          {copied ? "Copied!" : "Copy Link"}
+            {copied ? "Copied!" : "Copy Link"}
         </button>
-      </div>
+
+        <button
+            onClick={async () => {
+                const res = await mintToShard(entry);
+                alert(`✅ Mint simulated!\nTx ID: ${res.txId}`);
+            }}
+            className="text-purple-400 text-sm hover:underline"
+        >
+            Mint to Shard
+        </button>
+    </div>
     </li>
   );
 }
