@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+
 import { CheckCircle } from "lucide-react";
 import { WebIrys } from "@irys/sdk";
 import { providers } from "ethers";
@@ -118,19 +118,12 @@ export const FileUpload = () => {
     <div className="relative">
       <Dropzone onDrop={onDrop} />
 
-      {/* Your animated checkmark */}
-      <AnimatePresence>
-        {showCheck && (
-          <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            className="absolute inset-0 flex items-center justify-center pointer-events-none"
-          >
-            <CheckCircle className="w-16 h-16 text-green-400" />
-          </motion.div>
-        )}
-      </AnimatePresence>
+       {/* Animated checkmark removed for debugging */}
+      {showCheck && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <CheckCircle className="w-16 h-16 text-green-400" />
+        </div>
+      )}
 
       {/* The full preview and upload control section */}
       {file && (

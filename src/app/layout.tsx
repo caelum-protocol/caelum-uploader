@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import type { Metadata } from "next";
 import Script from "next/script";
 import LayoutClient from "./layoutClient";
+import { MemoryProvider } from "@/context/MemoryContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,7 +20,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Script src="/theme-loader.js" strategy="beforeInteractive" />
       </head>
       <body className={inter.className} suppressHydrationWarning>
-        <LayoutClient>{children}</LayoutClient>
+         <ThemeProvider>
+          <MemoryProvider>
+            <LayoutClient>{children}</LayoutClient>
+          </MemoryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

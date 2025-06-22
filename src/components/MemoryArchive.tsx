@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { AnimatePresence } from "framer-motion";
 import { useMemory } from "@/context/MemoryContext";
 import MemoryCard from "./MemoryCard";
 import { useTheme } from "@/context/ThemeContext";
@@ -86,25 +85,23 @@ export const MemoryArchive = () => {
       </div>
 
       <div className="space-y-4 max-h-96 overflow-y-auto pr-2" ref={listRef}>
-        <AnimatePresence>
-          {displayLog.length > 0 ? (
-            displayLog.map((entry) => (
-              <MemoryCard
-                key={entry.txId}
-                entry={entry}
-                onCopy={handleCopy}
-                // ✅ Now correctly calls the function from the context
-                onDelete={() => deleteMemory(entry.txId)}
-                copied={copiedId === entry.txId}
-                isNew={entry.isNew || newId === entry.txId}
-              />
-            ))
-          ) : (
-            <div className="text-center text-gray-500 italic mt-4">
-              No memories found for this search.
-            </div>
-          )}
-        </AnimatePresence>
+        {displayLog.length > 0 ? (
+          displayLog.map((entry) => (
+            <MemoryCard
+              key={entry.txId}
+              entry={entry}
+              onCopy={handleCopy}
+              // ✅ Now correctly calls the function from the context
+              onDelete={() => deleteMemory(entry.txId)}
+              copied={copiedId === entry.txId}
+              isNew={entry.isNew || newId === entry.txId}
+            />
+          ))
+        ) : (
+          <div className="text-center text-gray-500 italic mt-4">
+            No memories found for this search.
+          </div>
+        )}
       </div>
 
       {archive.length > 0 && (

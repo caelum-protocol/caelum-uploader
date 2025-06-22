@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useMemory } from "@/context/MemoryContext";
 import MemoryCard from "@/components/MemoryCard";
@@ -17,19 +17,20 @@ export default function ShardPage() {
   const { archive, isLoading } = useMemory();
   const { txId } = useParams<{ txId: string }>();
 
-  const shardItems = useMemo(() => {
+  console.log("SHARD PAGE MOUNTED:", { archive, isLoading, txId });
+
+  const [shardItems, setShardItems] = useState<MemoryEntry[] | null>(null);
+
+  // compute shard items once both context and params are ready
+  useEffect(() => {
     if (!isLoading && txId) {
-      return archive.filter((entry) => entry.txId === txId);
+       setShardItems(archive.filter((entry) => entry.txId === txId));
     }
-    return null;
   }, [archive, isLoading, txId]);
 
   if (!mounted || isLoading || !txId || shardItems === null) {
-    return (
-      <main className="min-h-screen flex items-center justify-center text-white bg-black">
-        <p className="text-sm opacity-60 animate-pulse">Loading shard...</p>
-      </main>
-    );
+     console.log("Waiting for data...", { mounted, isLoading, txId, shardItems });
+    return null;
   }
 
   const totalSize = shardItems.reduce((sum, item) => sum + parseInt(item.size), 0);
