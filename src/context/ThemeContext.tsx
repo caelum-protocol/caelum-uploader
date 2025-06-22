@@ -11,19 +11,22 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [theme, setThemeState] = useState<Theme>("dark");
+  const defaultTheme =
+    typeof window !== "undefined"
+      ? (localStorage.getItem("caelumTheme") as Theme) || "dark"
+      : "dark";
 
+  const [theme, setThemeState] = useState<Theme>(defaultTheme);
+
+  // Apply theme class immediately
   useEffect(() => {
-    const saved = localStorage.getItem("caelumTheme") as Theme;
-    if (saved) setThemeState(saved);
-  }, []);
+    document.documentElement.className = theme;
+  }, [theme]);
 
   const setTheme = (newTheme: Theme) => {
     localStorage.setItem("caelumTheme", newTheme);
     setThemeState(newTheme);
-    if (typeof document !== "undefined") {
-      document.documentElement.className = newTheme;
-    }
+    document.documentElement.className = newTheme;
   };
 
   return (
