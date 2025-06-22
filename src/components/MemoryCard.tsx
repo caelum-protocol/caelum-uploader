@@ -5,6 +5,7 @@ import getFileIcon from "../utils/getFileIcon";
 import type { MemoryEntry } from "@/types/memory";
 import mintToShard from "@/utils/mintToShard";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { useTheme } from "@/context/ThemeContext";
 import { useState } from "react";
 import JsonPreviewModal from "./JsonPreviewModal";
@@ -142,12 +143,12 @@ export default function MemoryCard({
           </button>
 
           {entry.txId && (
-            <a
+             <Link
               href={`/shard/${entry.txId}`}
               className="text-purple-300 text-sm hover:underline"
             >
               View Shard
-            </a>
+             </Link>
           )}
         </>
       )}
