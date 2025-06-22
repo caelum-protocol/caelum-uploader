@@ -14,16 +14,24 @@ let hasShownLoader = false;
 
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [showLoader, setShowLoader] = useState(!hasShownLoader);
+  const [showLoader, setShowLoader] = useState(() => {
+    if (typeof window === "undefined") return true;
+    if (sessionStorage.getItem("loaderShown")) {
+      hasShownLoader = true;
+      return false;
+    }
+    return !hasShownLoader;
+  });
    
   useEffect(() => {
     if (!hasShownLoader) {
       const timer = setTimeout(() => {
         hasShownLoader = true;
-      setShowLoader(false);
-    }, 1500);
-    return () => clearTimeout(timer);
-      }
+      sessionStorage.setItem("loaderShown", "true");
+        setShowLoader(false);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   return (

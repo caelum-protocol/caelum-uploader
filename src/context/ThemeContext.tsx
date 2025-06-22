@@ -1,7 +1,7 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
 
-type Theme = "dark" | "light" | "iris" | "matrix" | "pepe";
+type Theme = "dark" | "iris" | "matrix" | "pepe";
 
 interface ThemeContextType {
   theme: Theme;
@@ -21,6 +21,9 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const setTheme = (newTheme: Theme) => {
     localStorage.setItem("caelumTheme", newTheme);
     setThemeState(newTheme);
+    if (typeof document !== "undefined") {
+      document.documentElement.className = newTheme;
+    }
   };
 
   return (

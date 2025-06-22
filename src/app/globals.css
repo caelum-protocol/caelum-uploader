@@ -6,7 +6,7 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
   @apply transition-colors duration-300;
-  background-color: #0a0a0a;
+  background-color: transparent;
 }
 
 /* === THEME DEFINITIONS === */
