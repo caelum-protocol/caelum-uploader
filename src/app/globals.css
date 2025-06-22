@@ -92,11 +92,6 @@ body {
 /* === PEPE === */
 .pepe {
   background-color: #000000;
-  background-image: url("/pepewide.png");
-  background-size: auto 90%;
-  background-repeat: no-repeat;
-  background-position: bottom center;
-  background-attachment: fixed;
   color: #c42eff;
   font-family: "Comic Sans MS", cursive, sans-serif;
   --accent-glow: #ff53da;

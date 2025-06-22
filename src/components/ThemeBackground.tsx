@@ -6,6 +6,10 @@ import dynamic from "next/dynamic";
 import { useMemory } from "@/context/MemoryContext";
 import type { MemoryEntry } from "@/types/memory";
 import { AnimatePresence, motion } from "framer-motion";
+const BackgroundLayer = dynamic(
+  () => import("./BackgroundLayer").then(mod => mod.default),
+  { ssr: false }
+);
 
 const MatrixRain = dynamic(() => import("@/components/MatrixRain").then(mod => mod.default), { ssr: false });
 const IrisBackground = dynamic(
@@ -34,8 +38,9 @@ export const ThemeBackground = () => {
   }, [theme]);
 
    return (
-    <AnimatePresence mode="wait">
-      {theme === "matrix" && (
+    <>
+      <AnimatePresence mode="wait">
+        {theme === "matrix" && (
         <motion.div
           key="matrix"
           initial={{ opacity: 0 }}
@@ -84,5 +89,7 @@ export const ThemeBackground = () => {
         </motion.div>
       )}
     </AnimatePresence>
+      <BackgroundLayer />
+    </>
   );
 };

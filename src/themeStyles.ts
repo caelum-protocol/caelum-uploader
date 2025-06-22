@@ -8,3 +8,10 @@ export const inputStylesByTheme: Record<ThemeName, string> = {
   iris: "bg-indigo-100 text-indigo-900 border-indigo-400",
   pepe: "bg-purple-100 text-green-900 border-pink-400",
 };
+
+export const backgroundImageByTheme: Record<ThemeName, string | undefined> = {
+  dark: undefined,
+  matrix: undefined,
+  iris: undefined,
+  pepe: "/PepeWide.png",
+};
