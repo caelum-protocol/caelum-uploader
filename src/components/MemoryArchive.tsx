@@ -5,11 +5,12 @@ import { useMemory } from "@/context/MemoryContext";
 import MemoryCard from "./MemoryCard";
 import { useTheme } from "@/context/ThemeContext";
 import { inputStylesByTheme, ThemeName } from "@/themeStyles";
+import { AnimatePresence } from "framer-motion";
 
 export const MemoryArchive = () => {
   const { theme } = useTheme();
   // Get everything from the context, including the new delete/clear functions
-  const { archive, isLoading, deleteMemory, clearArchive, newId } = useMemory();
+  const { archive, deleteMemory, clearArchive, newId } = useMemory();
 
   // Your states for UI control are preserved
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -55,8 +56,6 @@ export const MemoryArchive = () => {
     }
   }, [newId]);
 
-  if (isLoading) return <div className="text-center text-gray-500 mt-10">Loading Archive...</div>;
-
   return (
     <div className="relative z-[5] mt-10 p-4 sm:p-6 rounded-lg max-w-2xl mx-auto theme-archive pointer-events-auto">
       <h2 className="text-xl font-semibold text-center text-cyan-300 mb-4">
@@ -85,23 +84,25 @@ export const MemoryArchive = () => {
       </div>
 
       <div className="space-y-4 max-h-96 overflow-y-auto pr-2" ref={listRef}>
-        {displayLog.length > 0 ? (
-          displayLog.map((entry) => (
-            <MemoryCard
-              key={entry.txId}
-              entry={entry}
-              onCopy={handleCopy}
-              // ✅ Now correctly calls the function from the context
-              onDelete={() => deleteMemory(entry.txId)}
-              copied={copiedId === entry.txId}
-              isNew={entry.isNew || newId === entry.txId}
-            />
-          ))
-        ) : (
-          <div className="text-center text-gray-500 italic mt-4">
-            No memories found for this search.
-          </div>
-        )}
+         <AnimatePresence>
+          {displayLog.length > 0 ? (
+            displayLog.map((entry) => (
+              <MemoryCard
+                key={entry.txId}
+                entry={entry}
+                onCopy={handleCopy}
+                // ✅ Now correctly calls the function from the context
+                onDelete={() => deleteMemory(entry.txId)}
+                copied={copiedId === entry.txId}
+                isNew={entry.isNew || newId === entry.txId}
+              />
+            ))
+          ) : (
+            <div className="text-center text-gray-500 italic mt-4">
+              No memories found for this search.
+            </div>
+          )}
+        </AnimatePresence>
       </div>
 
       {archive.length > 0 && (

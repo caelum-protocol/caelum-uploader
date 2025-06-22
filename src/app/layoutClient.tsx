@@ -7,6 +7,7 @@ import { Header } from "@/components/Header";
 import { ThemeBackground } from "@/components/ThemeBackground";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import LoadingOverlay from "@/components/LoadingOverlay";
 
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
@@ -36,8 +37,18 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
             {/* ✅ Loader only ever shows once on cold start */}
             {showLoader && <LoadingOverlay />}
 
-            <div key={pathname}>{children}</div>
-           </Web3Provider>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={pathname}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+              >
+                {children}
+              </motion.div>
+            </AnimatePresence>
+          </Web3Provider>
     </ThemeClientWrapper>
   );
 }

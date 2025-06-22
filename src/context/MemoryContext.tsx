@@ -4,7 +4,6 @@ import React, {
   createContext,
   useContext,
   useState,
-  useEffect,
   ReactNode,
 } from "react";
 import toast from "react-hot-toast";
@@ -16,7 +15,6 @@ import type { MemoryEntry } from "../types/memory";
 
 type MemoryContextType = {
   archive: MemoryEntry[];
-  isLoading: boolean;
   addMemory: (memory: MemoryEntry) => void;
   deleteMemory: (txId: string) => void;
   clearArchive: () => void;
@@ -46,16 +44,8 @@ export const MemoryProvider = ({ children }: { children: ReactNode }) => {
     }
     return [];
   });
-  const [isLoading, setIsLoading] = useState(true);
   const [memoryTrigger, setMemoryTrigger] = useState(false);
   const [newId, setNewId] = useState<string | null>(null);
-
-
-  useEffect(() => {
-    // indicate that the provider has mounted and the archive state reflects
-    // whatever was found in localStorage during initialization
-    setIsLoading(false);
-  }, []);
 
   const addMemory = (memory: MemoryEntry) => {
     const updatedArchive = [memory, ...archive];
@@ -80,7 +70,7 @@ export const MemoryProvider = ({ children }: { children: ReactNode }) => {
   };
 
 
-  const value = { archive, isLoading, addMemory, deleteMemory, clearArchive, memoryTrigger, newId };
+  const value = { archive, addMemory, deleteMemory, clearArchive, memoryTrigger, newId };
 
   return (
     <MemoryContext.Provider value={value}>{children}</MemoryContext.Provider>

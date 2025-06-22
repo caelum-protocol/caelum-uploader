@@ -13,124 +13,104 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 
 export default function ShardPage() {
-  const mounted = useMounted();
-  const { archive, isLoading } = useMemory();
+  const { archive } = useMemory();
   const { txId } = useParams<{ txId: string }>();
-
-  console.log("SHARD PAGE MOUNTED:", { archive, isLoading, txId });
+  const mounted = useMounted();
 
   const [shardItems, setShardItems] = useState<MemoryEntry[] | null>(null);
+  const [totalSize, setTotalSize] = useState(0);
 
-  // compute shard items once both context and params are ready
   useEffect(() => {
-    if (!isLoading && txId) {
-       setShardItems(archive.filter((entry) => entry.txId === txId));
+    if (txId && archive.length > 0) {
+      const filtered = archive.filter((entry) => entry.txId === txId);
+      setShardItems(filtered);
+      const size = filtered.reduce((acc, curr) => acc + parseInt(curr.size), 0);
+      setTotalSize(size);
     }
-  }, [archive, isLoading, txId]);
+  }, [txId, archive]);
 
-  if (!mounted || isLoading || !txId || shardItems === null) {
-     console.log("Waiting for data...", { mounted, isLoading, txId, shardItems });
-    return null;
-  }
-
-  const totalSize = shardItems.reduce((sum, item) => sum + parseInt(item.size), 0);
+  if (!mounted || !txId || shardItems === null) return null;
 
   const downloadShardZip = async () => {
     const zip = new JSZip();
-
     for (const file of shardItems) {
       try {
         const res = await fetch(file.url);
         const blob = await res.blob();
         zip.file(file.fileName, blob);
-      } catch (err) {
-        console.error(`Failed to fetch ${file.fileName}`, err);
+      } catch (e) {
+        console.error("Failed to fetch file", file.fileName);
       }
     }
 
     const metadata = shardItems.map(({ fileName, txId, type, size, uploadedAt }) => ({
-      fileName, txId, type, size, uploadedAt,
+      fileName,
+      txId,
+      type,
+      size,
+      uploadedAt,
     }));
-
     zip.file("metadata.json", JSON.stringify(metadata, null, 2));
-    const blob = await zip.generateAsync({ type: "blob" });
-    saveAs(blob, `shard-${txId}.zip`);
-  }; 
+    const content = await zip.generateAsync({ type: "blob" });
+    saveAs(content, `shard-${txId}.zip`);
+  };
 
   return (
-     <motion.main
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.98 }}
-      transition={{ duration: 0.25 }}
-      className="relative z-10 p-6 min-h-screen flex flex-col items-center bg-black bg-opacity-80"
-    >
-      <motion.section
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.3 }}
-        className="text-center mb-8"
-      >
-        <motion.h2
-          layout
-          className="text-3xl font-bold text-white mb-2"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.3 }}
-        >
-          Shard: <span className="text-purple-300">{txId}</span>
-
-        </motion.h2>
-
+    <main className="relative z-30 min-h-screen flex flex-col items-center justify-start px-4 py-24 text-center bg-black bg-opacity-80">
+      <div className="mb-8">
+        <h2 className="text-3xl font-bold text-white mb-2">
+          📦 Shard: <span className="text-purple-300">{txId}</span>
+        </h2>
         {shardItems.length > 0 && (
           <p className="text-gray-400 text-sm">
-            {shardItems.length} file{shardItems.length > 1 ? "s" : ""} · {formatBytes(totalSize)} · Minted{" "}
+            🧬 {shardItems.length} file{shardItems.length > 1 ? "s" : ""} •{" "}
+            {formatBytes(totalSize)} • Minted{" "}
             {new Date(shardItems[0].uploadedAt).toLocaleString()}
           </p>
-        )}  
-        </motion.section>
+        )}
+      </div>
 
       {shardItems.length > 0 && (
         <button
           onClick={downloadShardZip}
-          className="mb-8 text-white bg-green-600 px-6 py-2 rounded-md text-sm hover:bg-green-700 transition"
+          className="text-white bg-green-600 px-6 py-2 rounded-md text-sm hover:bg-green-700 transition mb-8"
         >
-          Download Shard (.zip)
+          ⬇ Download Shard (.zip)
         </button>
       )}
-        {shardItems.length === 0 ? (
-          <p className="text-red-400 text-lg mb-12">No memories found for this shard.</p>
-        ) : (
-          <ul className="w-full max-w-3xl flex flex-col gap-6 mt-6">
-            <AnimatePresence mode="popLayout">
-              {shardItems.map((entry) => (
+
+      {shardItems.length === 0 ? (
+        <p className="text-red-400 text-lg mb-12">No memories found for this shard.</p>
+      ) : (
+        <ul className="w-full max-w-3xl flex flex-col items-center justify-center gap-6 mt-6">
+          <AnimatePresence>
+            {shardItems.map((entry) => (
+              <motion.li
+                key={entry.txId + entry.fileName}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.3 }}
+                className="w-full"
+              >
                 <MemoryCard
-                  key={entry.txId + entry.fileName}
                   entry={entry}
                   copied={false}
                   onCopy={() => {}}
                   inShardView={true}
                 />
-              ))}
-            </AnimatePresence>
-          </ul>
-        )}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.3 }}
-          className="mt-16"
-        >
-          <Link
-            href="/"
-            className="inline-block bg-blue-700 hover:bg-blue-800 text-white px-8 py-3 rounded-full text-base shadow-lg transition font-semibold"
-          >
-            Back to Archive
-          </Link>
-        </motion.div>
-      </motion.main>
+              </motion.li>
+            ))}
+          </AnimatePresence>
+        </ul>
+      )}
+
+      <Link
+        href="/"
+        className="mt-16 inline-block bg-blue-700 hover:bg-blue-800 text-white px-8 py-3 rounded-full text-base shadow-lg transition font-semibold"
+      >
+        ⬅ Back to Archive
+      </Link>
+    </main>
   );
 }
