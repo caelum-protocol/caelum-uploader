@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { useParams } from "next/navigation";
 import { useMemory } from "@/context/MemoryContext";
 import MemoryCard from "@/components/MemoryCard";
@@ -17,13 +17,11 @@ export default function ShardPage() {
   const { archive, isLoading } = useMemory();
   const { txId } = useParams<{ txId: string }>();
 
-  const [shardItems, setShardItems] = useState<MemoryEntry[] | null>(null);
-
-  // compute shard items once both context and params are ready
-  useEffect(() => {
+  const shardItems = useMemo(() => {
     if (!isLoading && txId) {
-      setShardItems(archive.filter((entry) => entry.txId === txId));
+      return archive.filter((entry) => entry.txId === txId);
     }
+    return null;
   }, [archive, isLoading, txId]);
 
   if (!mounted || isLoading || !txId || shardItems === null) {

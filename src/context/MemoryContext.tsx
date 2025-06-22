@@ -28,27 +28,33 @@ type MemoryContextType = {
 const MemoryContext = createContext<MemoryContextType | undefined>(undefined);
 
 export const MemoryProvider = ({ children }: { children: ReactNode }) => {
-  const [archive, setArchive] = useState<MemoryEntry[]>([]);
+   const [archive, setArchive] = useState<MemoryEntry[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("caelumMemoryLog");
+        if (saved) {
+          const parsedLog = JSON.parse(saved) as MemoryEntry[];
+          parsedLog.sort(
+            (a, b) =>
+              new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
+          );
+          return parsedLog;
+        }
+      } catch (error) {
+        console.error("Failed to load memory log from storage", error);
+      }
+    }
+    return [];
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [memoryTrigger, setMemoryTrigger] = useState(false);
   const [newId, setNewId] = useState<string | null>(null);
 
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("caelumMemoryLog");
-      if (saved) {
-        const parsedLog = JSON.parse(saved) as MemoryEntry[];
-         parsedLog.sort(
-          (a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
-        );
-        setArchive(parsedLog);
-      }
-    } catch (error) {
-      console.error("Failed to load memory log from storage", error);
-    } finally {
-      setIsLoading(false);
-    }
+    // indicate that the provider has mounted and the archive state reflects
+    // whatever was found in localStorage during initialization
+    setIsLoading(false);
   }, []);
 
   const addMemory = (memory: MemoryEntry) => {
