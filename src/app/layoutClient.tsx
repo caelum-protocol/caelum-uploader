@@ -7,12 +7,14 @@ import { Header } from "@/components/Header";
 import { ThemeBackground } from "@/components/ThemeBackground";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import useMounted from "../utils/useMounted";
 import { AnimatePresence, motion } from "framer-motion";
 import LoadingOverlay from "@/components/LoadingOverlay";
 
 let hasShownLoader = false;
 
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
+  const mounted = useMounted();
   const pathname = usePathname();
   const [showLoader, setShowLoader] = useState(() => {
     if (typeof window === "undefined") return true;
@@ -33,6 +35,8 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
       return () => clearTimeout(timer);
     }
   }, []);
+
+  if (!mounted) return null;
 
   return (
     <ThemeClientWrapper>

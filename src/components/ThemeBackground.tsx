@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import useMounted from "@/utils/useMounted";
 import { useTheme } from "../context/ThemeContext";
 import dynamic from "next/dynamic";
 import { useMemory } from "@/context/MemoryContext";
@@ -28,6 +29,7 @@ const DarkScratchPad = dynamic(() => import("@/components/DarkScratchPad").then(
 const PepeEffects = dynamic(() => import("@/components/PepeEffects").then(mod => mod.default), { ssr: false });
 
 export const ThemeBackground = () => {
+  const mounted = useMounted();
   const { theme } = useTheme();
   const { memoryTrigger, archive } = useMemory();
 
@@ -36,6 +38,8 @@ export const ThemeBackground = () => {
     body.classList.remove("theme-pepe", "theme-dark", "theme-matrix", "theme-iris");
     if (theme) body.classList.add(`theme-${theme}`);
   }, [theme]);
+
+  if (!mounted) return null;
 
    return (
     <>
