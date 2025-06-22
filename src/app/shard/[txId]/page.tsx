@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useMemory } from "@/context/MemoryContext";
 import MemoryCard from "@/components/MemoryCard";
@@ -13,12 +14,19 @@ import { AnimatePresence, motion } from "framer-motion";
 
 export default function ShardPage() {
   const mounted = useMounted();
-  // Get both archive and isLoading from the context
   const { archive, isLoading } = useMemory();
   const { txId } = useParams<{ txId: string }>();
 
-  // ✅ The new loading condition now waits for the context to finish loading
-  if (!mounted || isLoading || !txId) {
+  const [shardItems, setShardItems] = useState<MemoryEntry[] | null>(null);
+
+  // compute shard items once both context and params are ready
+  useEffect(() => {
+    if (!isLoading && txId) {
+      setShardItems(archive.filter((entry) => entry.txId === txId));
+    }
+  }, [archive, isLoading, txId]);
+
+  if (!mounted || isLoading || !txId || shardItems === null) {
     return (
       <main className="min-h-screen flex items-center justify-center text-white bg-black">
         <p className="text-sm opacity-60 animate-pulse">Loading shard...</p>
@@ -26,8 +34,6 @@ export default function ShardPage() {
     );
   }
 
-  // This logic now runs only after the archive is confirmed to be loaded
-  const shardItems = archive.filter((entry) => entry.txId === txId);
   const totalSize = shardItems.reduce((sum, item) => sum + parseInt(item.size), 0);
 
   const downloadShardZip = async () => {
