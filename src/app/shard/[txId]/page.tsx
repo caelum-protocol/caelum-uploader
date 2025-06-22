@@ -4,10 +4,12 @@ import { useParams } from "next/navigation";
 import { useMemory } from "@/context/MemoryContext";
 import MemoryCard from "@/components/MemoryCard";
 import { useMounted } from "@/hooks/useMounted";
+import type { MemoryEntry } from "@/types/memory";
 import formatBytes from "@/utils/formatBytes";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function ShardPage() {
   const mounted = useMounted();
@@ -48,22 +50,42 @@ export default function ShardPage() {
     zip.file("metadata.json", JSON.stringify(metadata, null, 2));
     const blob = await zip.generateAsync({ type: "blob" });
     saveAs(blob, `shard-${txId}.zip`);
-  };
+  }; 
 
   return (
-    <main className="relative z-10 p-6 min-h-screen flex flex-col items-center bg-black bg-opacity-80">
-      <section className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-white mb-2">
+     <motion.main
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.98 }}
+      transition={{ duration: 0.25 }}
+      className="relative z-10 p-6 min-h-screen flex flex-col items-center bg-black bg-opacity-80"
+    >
+      <motion.section
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ duration: 0.3 }}
+        className="text-center mb-8"
+      >
+        <motion.h2
+          layout
+          className="text-3xl font-bold text-white mb-2"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.3 }}
+        >
           Shard: <span className="text-purple-300">{txId}</span>
-        </h2>
+
+        </motion.h2>
 
         {shardItems.length > 0 && (
           <p className="text-gray-400 text-sm">
             {shardItems.length} file{shardItems.length > 1 ? "s" : ""} · {formatBytes(totalSize)} · Minted{" "}
             {new Date(shardItems[0].uploadedAt).toLocaleString()}
           </p>
-        )}
-      </section>
+        )}  
+        </motion.section>
 
       {shardItems.length > 0 && (
         <button
@@ -73,29 +95,37 @@ export default function ShardPage() {
           Download Shard (.zip)
         </button>
       )}
-
-      {shardItems.length === 0 ? (
-        <p className="text-red-400 text-lg mb-12">No memories found for this shard.</p>
-      ) : (
-        <ul className="w-full max-w-3xl flex flex-col gap-6 mt-6">
-          {shardItems.map((entry) => (
-            <MemoryCard
-              key={entry.txId + entry.fileName}
-              entry={entry}
-              copied={false}
-              onCopy={() => {}}
-              inShardView={true}
-            />
-          ))}
-        </ul>
-      )}
-
-      <Link
-        href="/"
-        className="mt-16 inline-block bg-blue-700 hover:bg-blue-800 text-white px-8 py-3 rounded-full text-base shadow-lg transition font-semibold"
-      >
-        Back to Archive
-      </Link>
-    </main>
+        {shardItems.length === 0 ? (
+          <p className="text-red-400 text-lg mb-12">No memories found for this shard.</p>
+        ) : (
+          <ul className="w-full max-w-3xl flex flex-col gap-6 mt-6">
+            <AnimatePresence mode="popLayout">
+              {shardItems.map((entry) => (
+                <MemoryCard
+                  key={entry.txId + entry.fileName}
+                  entry={entry}
+                  copied={false}
+                  onCopy={() => {}}
+                  inShardView={true}
+                />
+              ))}
+            </AnimatePresence>
+          </ul>
+        )}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.3 }}
+          className="mt-16"
+        >
+          <Link
+            href="/"
+            className="inline-block bg-blue-700 hover:bg-blue-800 text-white px-8 py-3 rounded-full text-base shadow-lg transition font-semibold"
+          >
+            Back to Archive
+          </Link>
+        </motion.div>
+      </motion.main>
   );
 }
