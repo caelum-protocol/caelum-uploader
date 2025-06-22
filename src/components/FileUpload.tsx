@@ -14,7 +14,10 @@ import { UploadButton } from "@/components/UploadButton";
 import { StatusIndicator } from "@/components/StatusIndicator";
 
 import { useMemory } from "@/context/MemoryContext";
-import type { MemoryEntry } from "@/types/memory";
+// import type { MemoryEntry } from "@/memory";
+// import type { MemoryEntry } from "../memory"; // Update the path as needed to the correct location of MemoryEntry
+// import type { MemoryEntry } from "types/memory"; // Update this path if your MemoryEntry type is located elsewhere
+import type { MemoryEntry } from "../types/memory"; // Update the path as needed to the correct location of MemoryEntry
 
 export const FileUpload = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -23,7 +26,7 @@ export const FileUpload = () => {
   const [txId, setTxId] = useState<string>("");
   const [showCheck, setShowCheck] = useState(false);
 
-  const { setArchive, triggerMemory } = useMemory();
+  const { addMemory } = useMemory();
 
   const getIrys = async () => {
     // @ts-ignore
@@ -59,7 +62,7 @@ export const FileUpload = () => {
       setUploadStatus(`Error: ${(e as Error).message}`);
       toast.error("Failed to retrieve upload cost");
     }
-  }, []);
+  }, [getIrys]); // Added getIrys to dependency array for correctness
 
   const handleUpload = async () => {
     if (!file) return toast.error("Please select a file first.");
@@ -81,7 +84,6 @@ export const FileUpload = () => {
       setUploadStatus("Upload successful!");
       setShowCheck(true);
       setTimeout(() => setShowCheck(false), 1200);
-      toast.success("Upload complete!");
 
       const memory: MemoryEntry = {
         fileName: file.name,
@@ -90,23 +92,25 @@ export const FileUpload = () => {
         uploadedAt: new Date().toISOString(),
         txId: receipt.id,
         url: `https://gateway.irys.xyz/${receipt.id}`,
-        // mark as new so we can highlight on reload
         isNew: true,
       };
 
-         const history: MemoryEntry[] = JSON.parse(
-        localStorage.getItem("caelumMemoryLog") || "[]"
-      );
-      history.push(memory);
-      localStorage.setItem("caelumMemoryLog", JSON.stringify(history));
+      addMemory(memory);
+      
+      // Reset the UI after a short delay
+      setTimeout(() => {
+        setFile(null);
+        setUploadCost("");
+        setUploadStatus("");
+        setTxId("");
+      }, 1500);
 
-      // 🌌 Update shared memory + trigger iris
-      setArchive(prev => [...prev, memory]);
-      triggerMemory(receipt.id);
+
     } catch (e) {
       console.error(e);
-      setUploadStatus(`Error: ${(e as Error).message}`);
-      toast.error("Upload failed.");
+      const errorMessage = (e as Error).message;
+      setUploadStatus(`Error: ${errorMessage}`);
+      toast.error(errorMessage || "Upload failed.");
     }
   };
 
@@ -114,6 +118,7 @@ export const FileUpload = () => {
     <div className="relative">
       <Dropzone onDrop={onDrop} />
 
+      {/* Your animated checkmark */}
       <AnimatePresence>
         {showCheck && (
           <motion.div
@@ -127,6 +132,7 @@ export const FileUpload = () => {
         )}
       </AnimatePresence>
 
+      {/* The full preview and upload control section */}
       {file && (
         <div className="mt-6 space-y-4 max-w-xl mx-auto text-white">
           {uploadCost && (
@@ -153,15 +159,16 @@ export const FileUpload = () => {
         </div>
       )}
 
+      {/* The final confirmation section */}
       {txId && (
         <div className="mt-6 text-center text-green-400">
           <h4 className="font-semibold text-lg">Upload Confirmed!</h4>
-          <p>Tx ID: {txId}</p>
+          <p className="text-sm truncate px-4">Tx ID: {txId}</p>
           <a
             href={`https://gateway.irys.xyz/${txId}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="underline text-cyan-300"
+            className="underline text-cyan-300 text-sm"
           >
             View on Irys Gateway
           </a>

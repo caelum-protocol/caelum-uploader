@@ -1,40 +1,35 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import MemoryCard from "./MemoryCard";
 import { AnimatePresence } from "framer-motion";
-import { inputStylesByTheme, ThemeName } from "@/themeStyles";
-import { useTheme } from "@/context/ThemeContext";
 import { useMemory } from "@/context/MemoryContext";
+import MemoryCard from "./MemoryCard";
+import { useTheme } from "@/context/ThemeContext";
+import { inputStylesByTheme, ThemeName } from "@/themeStyles";
 
 export const MemoryArchive = () => {
   const { theme } = useTheme();
-  const { archive: log, setArchive, newId } = useMemory();
+  // Get everything from the context, including the new delete/clear functions
+  const { archive, isLoading, deleteMemory, clearArchive, newId } = useMemory();
+
+  // Your states for UI control are preserved
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("dateDesc");
   const listRef = useRef<HTMLDivElement>(null);
 
+  // Your copy handler is preserved
   const handleCopy = (url: string, txId: string) => {
     navigator.clipboard.writeText(url);
     setCopiedId(txId);
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const handleDelete = (txIdToDelete: string) => {
-    const updatedLog = log.filter((e) => e.txId !== txIdToDelete);
-    localStorage.setItem("caelumMemoryLog", JSON.stringify(updatedLog));
-    setArchive(updatedLog);
-  };
+  // The local handleDelete and handleClearAll are no longer needed,
+  // as this logic now lives in the context.
 
-  const handleClearAll = () => {
-    if (confirm("Are you sure you want to clear all archived memories?")) {
-      localStorage.removeItem("caelumMemoryLog");
-      setArchive([]);
-    }
-  };
-
-  const displayLog = [...log]
+  // Your filtering and sorting logic is preserved
+  const displayLog = archive
     .filter((entry) =>
       entry.fileName.toLowerCase().includes(searchTerm.toLowerCase())
     )
@@ -51,6 +46,7 @@ export const MemoryArchive = () => {
       }
     });
 
+  // Your scroll-to-new-item effect is preserved
   useEffect(() => {
     if (newId && listRef.current) {
       const el = listRef.current.querySelector(`#mem-${newId}`);
@@ -60,12 +56,15 @@ export const MemoryArchive = () => {
     }
   }, [newId]);
 
+  if (isLoading) return <div className="text-center text-gray-500 mt-10">Loading Archive...</div>;
+
   return (
     <div className="relative z-[5] mt-10 p-4 sm:p-6 rounded-lg max-w-2xl mx-auto theme-archive pointer-events-auto">
       <h2 className="text-xl font-semibold text-center text-cyan-300 mb-4">
         🧠 Archived Memories
       </h2>
 
+      {/* Your complete Search and Sort UI is restored */}
       <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-4">
         <input
           type="text"
@@ -86,7 +85,6 @@ export const MemoryArchive = () => {
         </select>
       </div>
 
-      {/* ✅ Replaced UL with DIV for stable SSR layout */}
       <div className="space-y-4 max-h-96 overflow-y-auto pr-2" ref={listRef}>
         <AnimatePresence>
           {displayLog.length > 0 ? (
@@ -95,23 +93,25 @@ export const MemoryArchive = () => {
                 key={entry.txId}
                 entry={entry}
                 onCopy={handleCopy}
-                onDelete={handleDelete}
+                // ✅ Now correctly calls the function from the context
+                onDelete={() => deleteMemory(entry.txId)}
                 copied={copiedId === entry.txId}
                 isNew={entry.isNew || newId === entry.txId}
               />
             ))
           ) : (
             <div className="text-center text-gray-500 italic mt-4">
-              No memories have been archived yet.
+              No memories found for this search.
             </div>
           )}
         </AnimatePresence>
       </div>
 
-      {log.length > 0 && (
+      {archive.length > 0 && (
         <div className="text-center mt-6">
           <button
-            onClick={handleClearAll}
+            // ✅ Now correctly calls the function from the context
+            onClick={clearArchive}
             className="px-4 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-md shadow-md transition"
           >
             Clear Archive

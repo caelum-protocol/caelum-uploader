@@ -1,85 +1,91 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
-import type { MemoryEntry } from "@/types/memory";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import toast from "react-hot-toast";
+// ✅ CORRECTED IMPORT PATH
+// Update the import path below to the correct relative path where MemoryEntry is defined.
+// For example, if MemoryEntry is in src/types/memory.ts, use:
+import type { MemoryEntry } from "../types/memory";
+// Adjust the path as needed based on your project structure.
 
 type MemoryContextType = {
   archive: MemoryEntry[];
-  setArchive: React.Dispatch<React.SetStateAction<MemoryEntry[]>>;
+  isLoading: boolean;
+  addMemory: (memory: MemoryEntry) => void;
+  deleteMemory: (txId: string) => void;
+  clearArchive: () => void;
+  // Your advanced features can be added back here
   memoryTrigger: boolean;
-  triggerMemory: (id?: string) => void;
   newId: string | null;
 };
 
 const MemoryContext = createContext<MemoryContextType | undefined>(undefined);
 
-type MemoryProviderProps = {
-  children: React.ReactNode;
-};
-
-export const MemoryProvider: React.FC<MemoryProviderProps> = ({ children }) => {
-  const [archive, setArchive] = useState<MemoryEntry[]>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("caelumMemoryLog");
-      return saved ? (JSON.parse(saved) as MemoryEntry[]) : [];
-    }
-    return [];
-  });
-
+export const MemoryProvider = ({ children }: { children: ReactNode }) => {
+  const [archive, setArchive] = useState<MemoryEntry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [memoryTrigger, setMemoryTrigger] = useState(false);
-  const [newId, setNewId] = useState<string | null>(() => {
-    if (typeof window !== "undefined") {
+  const [newId, setNewId] = useState<string | null>(null);
+
+
+  useEffect(() => {
+    try {
       const saved = localStorage.getItem("caelumMemoryLog");
       if (saved) {
-        const parsed: MemoryEntry[] = JSON.parse(saved);
-        const latest = parsed.reverse().find((e) => e.isNew);
-        return latest ? latest.txId : null;
+        const parsedLog = JSON.parse(saved) as MemoryEntry[];
+         parsedLog.sort(
+          (a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
+        );
+        setArchive(parsedLog);
       }
+    } catch (error) {
+      console.error("Failed to load memory log from storage", error);
+    } finally {
+      setIsLoading(false);
     }
-    return null;
-  });
+  }, []);
 
-  // When initialized with a new memory, clear the highlight after a few seconds
-  React.useEffect(() => {
-    if (newId) {
-      const timer = setTimeout(() => setNewId(null), 4000);
-      return () => clearTimeout(timer);
-    }
-  }, [newId]);
+  const addMemory = (memory: MemoryEntry) => {
+    const updatedArchive = [memory, ...archive];
+    setArchive(updatedArchive);
+    localStorage.setItem("caelumMemoryLog", JSON.stringify(updatedArchive));
+    // You can add your trigger logic here
+  };
 
-  // Remove isNew flag once highlight ends
-  React.useEffect(() => {
-    if (newId === null) {
-      const saved = localStorage.getItem("caelumMemoryLog");
-      if (saved) {
-        const parsed: MemoryEntry[] = JSON.parse(saved).map((e: MemoryEntry) => ({
-          ...e,
-          isNew: false,
-        }));
-        localStorage.setItem("caelumMemoryLog", JSON.stringify(parsed));
-        setArchive(parsed);
-      }
-    }
-  }, [newId]);
+  const deleteMemory = (txIdToDelete: string) => {
+    const updatedArchive = archive.filter((e) => e.txId !== txIdToDelete);
+    setArchive(updatedArchive);
+    localStorage.setItem("caelumMemoryLog", JSON.stringify(updatedArchive));
+    toast.success("Memory deleted.");
+  };
 
-  const triggerMemory = (id?: string) => {
-    setMemoryTrigger(true);
-    if (id) setNewId(id)
-    setTimeout(() => setMemoryTrigger(false), 500); // brief pulse
-    if (id) {
-      setTimeout(() => setNewId(null), 4000); // remove highlight after a bit
+  const clearArchive = () => {
+    if (confirm("Are you sure you want to clear all archived memories?")) {
+      setArchive([]);
+      localStorage.removeItem("caelumMemoryLog");
+      toast.success("Archive cleared.");
     }
   };
 
+
+  const value = { archive, isLoading, addMemory, deleteMemory, clearArchive, memoryTrigger, newId };
+
   return (
-     <MemoryContext.Provider value={{ archive, setArchive, memoryTrigger, triggerMemory, newId }}>
-      {children}
-    </MemoryContext.Provider>
+    <MemoryContext.Provider value={value}>{children}</MemoryContext.Provider>
   );
 };
 
 export const useMemory = () => {
   const context = useContext(MemoryContext);
-  if (!context) throw new Error("useMemory must be used within MemoryProvider");
+  if (context === undefined) {
+    throw new Error("useMemory must be used within a MemoryProvider");
+  }
   return context;
 };
+
