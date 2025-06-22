@@ -14,7 +14,7 @@ export const BackgroundLayer = () => {
       {bg && (
         <motion.div
           key={bg}
-          className="fixed inset-0 z-[-1] bg-cover bg-no-repeat bg-bottom"
+          className="fixed inset-0 z-[0] bg-cover bg-no-repeat bg-bottom"
           style={{ backgroundImage: `url('${bg}')` }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
