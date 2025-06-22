@@ -4,6 +4,7 @@ import React, {
   createContext,
   useContext,
   useState,
+  useEffect,
   ReactNode,
 } from "react";
 import toast from "react-hot-toast";
@@ -26,24 +27,26 @@ type MemoryContextType = {
 const MemoryContext = createContext<MemoryContextType | undefined>(undefined);
 
 export const MemoryProvider = ({ children }: { children: ReactNode }) => {
-   const [archive, setArchive] = useState<MemoryEntry[]>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem("caelumMemoryLog");
-        if (saved) {
-          const parsedLog = JSON.parse(saved) as MemoryEntry[];
-          parsedLog.sort(
-            (a, b) =>
-              new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
-          );
-          return parsedLog;
-        }
-      } catch (error) {
-        console.error("Failed to load memory log from storage", error);
+   const [archive, setArchive] = useState<MemoryEntry[]>([]);
+
+  // Load archive from localStorage on mount so that the first render
+  // is identical between server and client. This prevents hydration
+  // mismatches when memories exist in localStorage.
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("caelumMemoryLog");
+      if (saved) {
+        const parsedLog = JSON.parse(saved) as MemoryEntry[];
+        parsedLog.sort(
+          (a, b) =>
+            new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
+        );
+        setArchive(parsedLog);
       }
+    } catch (error) {
+      console.error("Failed to load memory log from storage", error);
     }
-    return [];
-  });
+  }, []);
   const [memoryTrigger, setMemoryTrigger] = useState(false);
   const [newId, setNewId] = useState<string | null>(null);
 
