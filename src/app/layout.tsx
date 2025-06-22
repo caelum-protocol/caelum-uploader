@@ -19,7 +19,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <Script src="/theme-loader.js" strategy="beforeInteractive" />
       </head>
-      <body className={inter.className} suppressHydrationWarning>
+      <body
+        className={`${inter.className} transition-colors duration-300`}
+        suppressHydrationWarning
+      >
          <ThemeProvider>
           <MemoryProvider>
             <LayoutClient>{children}</LayoutClient>

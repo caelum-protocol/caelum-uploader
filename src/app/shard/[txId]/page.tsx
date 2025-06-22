@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useMemory } from "@/context/MemoryContext";
 import MemoryCard from "@/components/MemoryCard";
-import { useMounted } from "@/hooks/useMounted";
 import type { MemoryEntry } from "@/types/memory";
 import formatBytes from "@/utils/formatBytes";
 import JSZip from "jszip";
@@ -15,7 +14,11 @@ import { AnimatePresence, motion } from "framer-motion";
 export default function ShardPage() {
   const { archive } = useMemory();
   const { txId } = useParams<{ txId: string }>();
-  const mounted = useMounted();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const [shardItems, setShardItems] = useState<MemoryEntry[] | null>(null);
   const [totalSize, setTotalSize] = useState(0);
@@ -56,7 +59,7 @@ export default function ShardPage() {
   };
 
   return (
-    <main className="relative z-30 min-h-screen flex flex-col items-center justify-start px-4 py-24 text-center bg-black bg-opacity-80">
+    <main className="relative z-30 min-h-screen flex flex-col items-center justify-start px-4 py-24 text-center bg-black bg-opacity-80 transition-colors duration-300">
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-white mb-2">
           📦 Shard: <span className="text-purple-300">{txId}</span>

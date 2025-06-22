@@ -6,25 +6,24 @@ import { ThemeClientWrapper } from "@/components/ThemeClientWrapper";
 import { Header } from "@/components/Header";
 import { ThemeBackground } from "@/components/ThemeBackground";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import LoadingOverlay from "@/components/LoadingOverlay";
 
+let hasShownLoader = false;
+
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-
-  // ✅ Tracks whether initial load is complete (ref does not cause re-renders)
-  const hasLoadedOnce = useRef(false);
-  const [showLoader, setShowLoader] = useState(!hasLoadedOnce.current);
-
+  const [showLoader, setShowLoader] = useState(!hasShownLoader);
+   
   useEffect(() => {
-    if (!hasLoadedOnce.current) {
+    if (!hasShownLoader) {
       const timer = setTimeout(() => {
-        hasLoadedOnce.current = true;
-        setShowLoader(false);
-      }, 800); // adjust delay if needed
-      return () => clearTimeout(timer);
-    }
+        hasShownLoader = true;
+      setShowLoader(false);
+    }, 1500);
+    return () => clearTimeout(timer);
+      }
   }, []);
 
   return (
@@ -33,9 +32,7 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
         <ThemeBackground />
         <Header />
         <Toaster position="top-right" />
-
-            {/* ✅ Loader only ever shows once on cold start */}
-            {showLoader && <LoadingOverlay />}
+        {showLoader && <LoadingOverlay />}
 
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
@@ -44,6 +41,7 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -15 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="min-h-screen transition-colors duration-300"
               >
                 {children}
               </motion.div>

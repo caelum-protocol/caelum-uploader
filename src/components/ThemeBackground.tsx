@@ -5,6 +5,7 @@ import { useTheme } from "../context/ThemeContext";
 import dynamic from "next/dynamic";
 import { useMemory } from "@/context/MemoryContext";
 import type { MemoryEntry } from "@/types/memory";
+import { AnimatePresence, motion } from "framer-motion";
 
 const MatrixRain = dynamic(() => import("@/components/MatrixRain").then(mod => mod.default), { ssr: false });
 const IrisBackground = dynamic(
@@ -32,10 +33,56 @@ export const ThemeBackground = () => {
     if (theme) body.classList.add(`theme-${theme}`);
   }, [theme]);
 
-  if (theme === "matrix") return <MatrixRain />;
-  if (theme === "iris") return <IrisBackground memoryTrigger={memoryTrigger} memoryCount={archive.length} archive={archive} />;
-  if (theme === "dark") return <DarkScratchPad />;
-  if (theme === "pepe") return <PepeEffects />;
-
-  return null;
+   return (
+    <AnimatePresence mode="wait">
+      {theme === "matrix" && (
+        <motion.div
+          key="matrix"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <MatrixRain />
+        </motion.div>
+      )}
+      {theme === "iris" && (
+        <motion.div
+          key="iris"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <IrisBackground
+            memoryTrigger={memoryTrigger}
+            memoryCount={archive.length}
+            archive={archive}
+          />
+        </motion.div>
+      )}
+      {theme === "dark" && (
+        <motion.div
+          key="dark"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <DarkScratchPad />
+        </motion.div>
+      )}
+      {theme === "pepe" && (
+        <motion.div
+          key="pepe"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <PepeEffects />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
 };

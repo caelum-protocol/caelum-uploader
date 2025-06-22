@@ -57,7 +57,7 @@ export const MemoryArchive = () => {
   }, [newId]);
 
   return (
-    <div className="relative z-[5] mt-10 p-4 sm:p-6 rounded-lg max-w-2xl mx-auto theme-archive pointer-events-auto">
+     <div className="relative z-[5] mt-10 p-4 sm:p-6 rounded-lg max-w-2xl mx-auto theme-archive pointer-events-auto transition-colors duration-300">
       <h2 className="text-xl font-semibold text-center text-cyan-300 mb-4">
         🧠 Archived Memories
       </h2>
