@@ -7,6 +7,7 @@ import { Header } from "@/components/Header";
 import { ThemeBackground } from "@/components/ThemeBackground";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useTheme } from "@/context/ThemeContext";
 import useMounted from "../utils/useMounted";
 import { AnimatePresence, motion } from "framer-motion";
 import LoadingOverlay from "@/components/LoadingOverlay";
@@ -15,6 +16,7 @@ let hasShownLoader = false;
 
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
   const mounted = useMounted();
+  const { theme } = useTheme();
   const pathname = usePathname();
   const [showLoader, setShowLoader] = useState(() => {
     if (typeof window === "undefined") return true;
@@ -48,7 +50,7 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
 
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
-                key={pathname}
+                key={`${pathname}-${theme}`}
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -15 }}

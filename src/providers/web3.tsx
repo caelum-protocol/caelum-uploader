@@ -3,7 +3,6 @@ import { WagmiProvider, createConfig, http } from "wagmi";
 import { mainnet, polygon, sepolia, arbitrum, optimism, bsc, avalanche, base } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
-import { ThemeProvider } from "@/context/ThemeContext";
 
 const queryClient = new QueryClient();
 
@@ -30,7 +29,7 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <ConnectKitProvider>
-          <ThemeProvider>{children}</ThemeProvider>
+           {children}
         </ConnectKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
