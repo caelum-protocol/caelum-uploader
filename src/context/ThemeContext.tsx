@@ -1,5 +1,6 @@
 "use client";
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useRef } from "react";
+import { useAppSounds } from "../hooks/useAppSounds";
 
 type Theme = "dark" | "iris" | "matrix" | "pepe";
 
@@ -11,8 +12,10 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-    // Default to dark so that server and initial client render match.
+  // Default to dark so that server and initial client render match.
   const [theme, setThemeState] = useState<Theme>("dark");
+  const { playThemeSwitch } = useAppSounds();
+  const isFirstRender = useRef(true);
 
   // After mount, read the saved theme from localStorage. This avoids
   // hydration mismatches when the user previously selected a different
@@ -32,7 +35,12 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   // Apply theme class whenever it changes.
   useEffect(() => {
     document.documentElement.className = theme;
-  }, [theme]);
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    playThemeSwitch();
+  }, [theme, playThemeSwitch]);
 
   const setTheme = (newTheme: Theme) => {
     localStorage.setItem("caelumTheme", newTheme);

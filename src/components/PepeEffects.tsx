@@ -2,6 +2,9 @@
 "use client";
 import { useEffect, useRef } from "react";
 
+const BASE_WIDTH = 1022;
+const BASE_HEIGHT = 1187;
+
 export default function PepeEffects() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -15,6 +18,22 @@ export default function PepeEffects() {
     let height = window.innerHeight;
     canvas.width = width;
     canvas.height = height;
+
+        let scale = Math.max(width / BASE_WIDTH, height / BASE_HEIGHT);
+    let offsetX = (width - BASE_WIDTH * scale) / 2;
+    let offsetY = height - BASE_HEIGHT * scale;
+
+    const updateScale = () => {
+      scale = Math.max(width / BASE_WIDTH, height / BASE_HEIGHT);
+      offsetX = (width - BASE_WIDTH * scale) / 2;
+      offsetY = height - BASE_HEIGHT * scale;
+    };
+
+    const toScreenX = (x: number) => offsetX + x * scale;
+    const toScreenY = (y: number) => offsetY + y * scale;
+
+    const baseX = BASE_WIDTH / 2 + 161;
+    const baseY = BASE_HEIGHT * 0.74;
 
     const stardustCount = 120;
     const starCount = 80;
@@ -56,8 +75,8 @@ export default function PepeEffects() {
       const angle = Math.random() * Math.PI * 2;
       const radius = 180 + Math.random() * 40;
       return {
-        baseX: width / 2 + 236,
-        baseY: height * 0.74,
+        baseX,
+        baseY,
         angle,
         radius,
         size: Math.random() * 4 + 2,
@@ -68,8 +87,8 @@ export default function PepeEffects() {
 
     function createSpark() {
       return {
-        x: width / 2 + 236 + (Math.random() - 0.5) * 8,
-        y: height * 0.74 + Math.random() * 20,
+        x: baseX + (Math.random() - 0.5) * 8,
+        y: baseY + Math.random() * 20,
         vy: -1.2 - Math.random() * 0.8,
         alpha: 0.3 + Math.random() * 0.3,
         size: Math.random() * 1.5 + 1.2
@@ -103,25 +122,27 @@ export default function PepeEffects() {
 
       for (const e of echoes) {
         e.angle += e.speed;
-        const x = e.baseX + Math.cos(e.angle) * e.radius;
-        const y = e.baseY + Math.sin(e.angle) * e.radius * 0.4;
+        const baseXPos = e.baseX + Math.cos(e.angle) * e.radius;
+        const baseYPos = e.baseY + Math.sin(e.angle) * e.radius * 0.4;
+        const x = toScreenX(baseXPos);
+        const y = toScreenY(baseYPos);
         ctx.beginPath();
-        ctx.arc(x, y, e.size, 0, Math.PI * 2);
+        ctx.arc(x, y, e.size * scale, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(255, 130, 214, ${e.alpha})`;
-        ctx.shadowBlur = 8;
+        ctx.shadowBlur = 8 * scale;
         ctx.shadowColor = `rgba(255, 130, 214, ${e.alpha * 0.6})`;
         ctx.fill();
         ctx.shadowBlur = 0;
 
         ctx.beginPath();
-        ctx.arc(x - Math.cos(e.angle) * 4, y - Math.sin(e.angle) * 2, e.size * 0.5, 0, Math.PI * 2);
+        ctx.arc(x - Math.cos(e.angle) * 4 * scale, y - Math.sin(e.angle) * 2 * scale, e.size * 0.5 * scale, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(255,130,214,${e.alpha * 0.3})`;
         ctx.fill();
       }
 
       for (const sp of sparks) {
         ctx.beginPath();
-        ctx.arc(sp.x, sp.y, sp.size, 0, Math.PI * 2);
+        ctx.arc(toScreenX(sp.x), toScreenY(sp.y), sp.size * scale, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(255,130,214,${sp.alpha})`;
         ctx.fill();
         sp.y += sp.vy;
@@ -134,9 +155,9 @@ export default function PepeEffects() {
 
       if (pulse.alpha > 0.01) {
         ctx.beginPath();
-        ctx.arc(width / 2 + 236, height * 0.74, pulse.radius, 0, Math.PI * 2);
+        ctx.arc(toScreenX(baseX), toScreenY(baseY), pulse.radius * scale, 0, Math.PI * 2);
         ctx.strokeStyle = `rgba(255,130,214,${pulse.alpha})`;
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 2 * scale;
         ctx.stroke();
         pulse.radius += 0.7;
         pulse.alpha *= 0.96;
@@ -156,6 +177,7 @@ export default function PepeEffects() {
       height = window.innerHeight;
       canvas.width = width;
       canvas.height = height;
+      updateScale();
       stardust = Array.from({ length: stardustCount }, () => createStardust());
       stars = Array.from({ length: starCount }, () => createStar());
       echoes = Array.from({ length: echoCount }, () => createEcho());
