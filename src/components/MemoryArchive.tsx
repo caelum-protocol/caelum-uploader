@@ -5,7 +5,7 @@ import { useMemory } from "@/context/MemoryContext";
 import MemoryCard from "./MemoryCard";
 import { useTheme } from "@/context/ThemeContext";
 import { inputStylesByTheme, ThemeName } from "@/themeStyles";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion"
 
 export const MemoryArchive = () => {
   const { theme } = useTheme();
@@ -57,7 +57,13 @@ export const MemoryArchive = () => {
   }, [newId]);
 
   return (
-     <div className="relative z-[5] mt-10 p-4 sm:p-6 rounded-lg max-w-2xl mx-auto theme-archive pointer-events-auto transition-colors duration-300">
+      <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.25 }}
+      className="relative z-[5] mt-10 p-4 sm:p-6 rounded-lg max-w-2xl mx-auto theme-archive pointer-events-auto transition-colors duration-300"
+    >
       <h2 className="text-xl font-semibold text-center text-cyan-300 mb-4">
         🧠 Archived Memories
       </h2>
@@ -83,7 +89,7 @@ export const MemoryArchive = () => {
         </select>
       </div>
 
-      <div className="space-y-4 max-h-96 overflow-y-auto pr-2" ref={listRef}>
+       <div className="space-y-4 max-h-96 min-h-48 overflow-y-auto pr-2" ref={listRef}>
          <AnimatePresence>
           {displayLog.length > 0 ? (
             displayLog.map((entry) => (
@@ -116,7 +122,7 @@ export const MemoryArchive = () => {
           </button>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 };
 

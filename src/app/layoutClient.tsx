@@ -18,6 +18,16 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
   const mounted = useMounted();
   const { theme } = useTheme();
   const pathname = usePathname();
+  useEffect(() => {
+    document.documentElement.classList.add("overflow-y-hidden");
+    const timer = setTimeout(() => {
+      document.documentElement.classList.remove("overflow-y-hidden");
+    }, 350);
+    return () => {
+      clearTimeout(timer);
+      document.documentElement.classList.remove("overflow-y-hidden");
+    };
+  }, [pathname, theme]);
   const [showLoader, setShowLoader] = useState(() => {
     if (typeof window === "undefined") return true;
     if (sessionStorage.getItem("loaderShown")) {
