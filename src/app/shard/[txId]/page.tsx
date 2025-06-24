@@ -17,16 +17,16 @@ export default function ShardPage() {
   const { txId } = useParams<{ txId: string }>();
 
    const shardItems = useMemo(() => {
-    if (!txId) return [];
+    if (!ready || !txId) return [];
     return archive.filter((entry) => entry.txId === txId);
-  }, [txId, archive]);
+   }, [txId, archive, ready]);
 
     const totalSize = useMemo(
     () => shardItems.reduce((acc, curr) => acc + parseInt(curr.size), 0),
     [shardItems]
   );
 
-  if (!mounted || !ready || !txId) {
+   if (!mounted || !ready) {
     return (
       <motion.main
         initial={{ opacity: 0, y: 10 }}

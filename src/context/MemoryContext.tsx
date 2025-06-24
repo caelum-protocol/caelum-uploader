@@ -28,27 +28,26 @@ type MemoryContextType = {
 const MemoryContext = createContext<MemoryContextType | undefined>(undefined);
 
 export const MemoryProvider = ({ children }: { children: ReactNode }) => {
-    const [archive, setArchive] = useState<MemoryEntry[]>([]);
+  const [archive, setArchive] = useState<MemoryEntry[]>([]);
   const [ready, setReady] = useState(false);
 
   // Load archive from localStorage on mount
   useEffect(() => {
     if (typeof window === "undefined") return;
-    try {
-      const saved = localStorage.getItem("caelumMemoryLog");
-       if (saved) {
+    const saved = localStorage.getItem("caelumMemoryLog");
+    if (saved) {
+      try {
         const parsed = JSON.parse(saved) as MemoryEntry[];
         parsed.sort(
           (a, b) =>
             new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
         );
         setArchive(parsed);
+      } catch (error) {
+        console.error("Failed to load memory log from storage", error);
       }
-    } catch (error) {
-      console.error("Failed to load memory log from storage", error);
-    } finally {
-      setReady(true);
     }
+    setReady(true);
   }, []);
 
   // Keep localStorage in sync when the archive changes

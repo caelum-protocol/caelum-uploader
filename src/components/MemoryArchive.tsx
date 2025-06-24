@@ -58,10 +58,8 @@ export const MemoryArchive = () => {
     }
   }, [newId]);
 
-    if (!mounted || !ready) {
-    return (
-      <div className="mt-10 text-center text-gray-400">Loading archive...</div>
-    );
+  if (!mounted || !ready) {
+    return <p className="mt-10 text-center text-gray-400">Loading archive...</p>;
   }
 
   return (
