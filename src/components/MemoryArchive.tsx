@@ -6,11 +6,13 @@ import MemoryCard from "./MemoryCard";
 import { useTheme } from "@/context/ThemeContext";
 import { inputStylesByTheme, ThemeName } from "@/themeStyles";
 import { AnimatePresence, motion } from "framer-motion"
+import useMounted from "@/utils/useMounted";
 
 export const MemoryArchive = () => {
+  const mounted = useMounted();
   const { theme } = useTheme();
   // Get everything from the context, including the new delete/clear functions
-  const { archive, deleteMemory, clearArchive, newId } = useMemory();
+  const { archive, deleteMemory, clearArchive, newId, ready } = useMemory();
 
   // Your states for UI control are preserved
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -24,7 +26,7 @@ export const MemoryArchive = () => {
     setCopiedId(txId);
     setTimeout(() => setCopiedId(null), 2000);
   };
-
+  
   // The local handleDelete and handleClearAll are no longer needed,
   // as this logic now lives in the context.
 
@@ -55,6 +57,12 @@ export const MemoryArchive = () => {
       }
     }
   }, [newId]);
+
+    if (!mounted || !ready) {
+    return (
+      <div className="mt-10 text-center text-gray-400">Loading archive...</div>
+    );
+  }
 
   return (
       <motion.div

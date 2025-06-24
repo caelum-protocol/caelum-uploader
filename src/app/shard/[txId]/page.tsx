@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { useParams } from "next/navigation";
 import { useMemory } from "@/context/MemoryContext";
 import MemoryCard from "@/components/MemoryCard";
-import type { MemoryEntry } from "@/types/memory";
 import formatBytes from "@/utils/formatBytes";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
@@ -14,23 +13,32 @@ import useMounted from "@/utils/useMounted";
 
 export default function ShardPage() {
   const mounted = useMounted();
-  const { archive } = useMemory();
+  const { archive, ready } = useMemory();
   const { txId } = useParams<{ txId: string }>();
 
-  const [shardItems, setShardItems] = useState<MemoryEntry[] | null>(null);
-  const [totalSize, setTotalSize] = useState(0);
+   const shardItems = useMemo(() => {
+    if (!txId) return [];
+    return archive.filter((entry) => entry.txId === txId);
+  }, [txId, archive]);
 
-  useEffect(() => {
-    if (!mounted) return;
-    if (txId && archive.length > 0) {
-      const filtered = archive.filter((entry) => entry.txId === txId);
-      setShardItems(filtered);
-      const size = filtered.reduce((acc, curr) => acc + parseInt(curr.size), 0);
-      setTotalSize(size);
-    }
-  }, [txId, archive, mounted]);
+    const totalSize = useMemo(
+    () => shardItems.reduce((acc, curr) => acc + parseInt(curr.size), 0),
+    [shardItems]
+  );
 
-  if (!mounted || !txId || shardItems === null) return null;
+  if (!mounted || !ready || !txId) {
+    return (
+      <motion.main
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ duration: 0.25 }}
+        className="relative z-30 min-h-screen flex items-center justify-center px-4 py-24 text-center bg-black bg-opacity-80 transition-colors duration-300"
+      >
+        <p className="text-white">Loading shard...</p>
+      </motion.main>
+    );
+  }
 
   const downloadShardZip = async () => {
     const zip = new JSZip();

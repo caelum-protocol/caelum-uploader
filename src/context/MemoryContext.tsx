@@ -22,33 +22,40 @@ type MemoryContextType = {
   // Your advanced features can be added back here
   memoryTrigger: boolean;
   newId: string | null;
+  ready: boolean;
 };
 
 const MemoryContext = createContext<MemoryContextType | undefined>(undefined);
 
 export const MemoryProvider = ({ children }: { children: ReactNode }) => {
-    const [archive, setArchive] = useState<MemoryEntry[]>(() => {
-    if (typeof window === "undefined") return [];
+    const [archive, setArchive] = useState<MemoryEntry[]>([]);
+  const [ready, setReady] = useState(false);
+
+  // Load archive from localStorage on mount
+  useEffect(() => {
+    if (typeof window === "undefined") return;
     try {
       const saved = localStorage.getItem("caelumMemoryLog");
-      if (!saved) return [];
-      const parsed = JSON.parse(saved) as MemoryEntry[];
-      parsed.sort(
-        (a, b) =>
-          new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
-      );
-      return parsed;
+       if (saved) {
+        const parsed = JSON.parse(saved) as MemoryEntry[];
+        parsed.sort(
+          (a, b) =>
+            new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
+        );
+        setArchive(parsed);
+      }
     } catch (error) {
       console.error("Failed to load memory log from storage", error);
-       return [];
+    } finally {
+      setReady(true);
     }
-  });
+  }, []);
 
   // Keep localStorage in sync when the archive changes
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (!ready || typeof window === "undefined") return;
     localStorage.setItem("caelumMemoryLog", JSON.stringify(archive));
-  }, [archive]);
+  }, [archive, ready]);
   const [memoryTrigger, setMemoryTrigger] = useState(false);
   const [newId, setNewId] = useState<string | null>(null);
 
@@ -73,7 +80,15 @@ export const MemoryProvider = ({ children }: { children: ReactNode }) => {
   };
 
 
-  const value = { archive, addMemory, deleteMemory, clearArchive, memoryTrigger, newId };
+   const value = {
+    archive,
+    addMemory,
+    deleteMemory,
+    clearArchive,
+    memoryTrigger,
+    newId,
+    ready,
+  };
 
   return (
     <MemoryContext.Provider value={value}>{children}</MemoryContext.Provider>
