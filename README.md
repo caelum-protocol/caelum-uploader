@@ -1,33 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Caelum Memory Vault
 
-## Getting Started
+**Caelum Memory Vault** is a futuristic memory archiver built with Next.js. Users can upload files that are stored locally and grouped into unique "shards." The interface supports multiple animated themes (Matrix rain, Iris nebula, and Pepe mode), transitions, sound effects, and toast notifications. Data persists via `localStorage`, enabling full offline usage.
 
-First, run the development server:
+## Features
+
+- ⚡ **Client‑side only** – works completely offline
+- 🎨 **Dynamic themes** – dark, Matrix, Iris, and Pepe with animated effects
+- 🪄 **Smooth transitions** powered by Framer Motion
+- 🔊 **Sound effects** and toast‑based UI feedback
+- 📂 **Shard system** to group and download memories
+- 💾 **LocalStorage persistence** across sessions
+
+## Demo
+
+![App screenshot](docs/demo.png)
+
+*A glimpse of the Matrix theme with active shard view.*
+
+## Installation
 
 ```bash
+# install dependencies
+npm install
+# or
+yarn
+```
+
+## Development
+
+```bash
+# start local dev server at http://localhost:3000
 npm run dev
 # or
 yarn dev
+```
+Run tests with:
+
+```bash
+npm test
 # or
+yarn test
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Build & Deploy
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+npm run start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Package for Windows
 
-## Learn More
+You can export a static build and wrap it with a tool such as Tauri or Electron to produce a `.exe` file:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run build
+npx next export
+# then package the `out` folder with your preferred wrapper
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Android (optional)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The app works as a Progressive Web App. Install it from the browser or wrap the exported build in tools like Capacitor to generate an Android package.
 
-## Deploy on Vercel
+## Folder Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+src/
+  app/          # Next.js pages and layouts
+  components/   # UI components (themes, uploader, archive)
+  context/      # React context providers
+  hooks/        # Custom hooks
+  providers/    # Web3 and other global providers
+  utils/        # Helper utilities
+public/         # Static assets (images, sounds)
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Contributing
+
+Contributions are welcome! Open an issue or submit a pull request for new features, fixes, or improvements.
+
+## License
+
+This project is licensed under the MIT License.
+
+
+## Credits
+
+Built with **irys/sdk**, **Next.js**, **React**, **Tailwind CSS**, **Framer Motion**, **React Hot Toast**, and **use‑sound**.

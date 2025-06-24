@@ -2,7 +2,6 @@
 
 export default async function mintToShard(entry: any) {
   console.log("🧬 Minting to shard (stub):", entry);
-  // In the future: upload to Arweave, Bundlr, IPFS, etc.
 
   return {
     success: true,

@@ -11,30 +11,27 @@ import useMounted from "@/utils/useMounted";
 export const MemoryArchive = () => {
   const mounted = useMounted();
   const { theme } = useTheme();
-  // Get everything from the context, including the new delete/clear functions
   const { archive, deleteMemory, clearArchive, newId, ready } = useMemory();
 
-  // Your states for UI control are preserved
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("dateDesc");
   const listRef = useRef<HTMLDivElement>(null);
 
-  // Your copy handler is preserved
   const handleCopy = (url: string, txId: string) => {
     navigator.clipboard.writeText(url);
     setCopiedId(txId);
     setTimeout(() => setCopiedId(null), 2000);
   };
   
-  // The local handleDelete and handleClearAll are no longer needed,
-  // as this logic now lives in the context.
-
-  // Your filtering and sorting logic is preserved
   const displayLog = archive
-    .filter((entry) =>
-      entry.fileName.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+    .filter((entry) => {
+      const term = searchTerm.toLowerCase();
+      return (
+        entry.fileName.toLowerCase().includes(term) ||
+        (entry.note ? entry.note.toLowerCase().includes(term) : false)
+      );
+    })
     .sort((a, b) => {
       switch (sortOption) {
         case "dateAsc":
@@ -48,7 +45,6 @@ export const MemoryArchive = () => {
       }
     });
 
-  // Your scroll-to-new-item effect is preserved
   useEffect(() => {
     if (newId && listRef.current) {
       const el = listRef.current.querySelector(`#mem-${newId}`);
@@ -68,7 +64,6 @@ export const MemoryArchive = () => {
         🧠 Archived Memories
       </h2>
 
-      {/* Your complete Search and Sort UI is restored */}
       <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-4">
         <input
           type="text"
@@ -97,7 +92,6 @@ export const MemoryArchive = () => {
                 key={entry.txId}
                 entry={entry}
                 onCopy={handleCopy}
-                // ✅ Now correctly calls the function from the context
                 onDelete={() => deleteMemory(entry.txId)}
                 copied={copiedId === entry.txId}
                 isNew={entry.isNew || newId === entry.txId}
@@ -114,7 +108,6 @@ export const MemoryArchive = () => {
       {archive.length > 0 && (
         <div className="text-center mt-6">
           <button
-            // ✅ Now correctly calls the function from the context
             onClick={clearArchive}
             className="px-4 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-md shadow-md transition"
           >

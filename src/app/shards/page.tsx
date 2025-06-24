@@ -45,7 +45,7 @@ export default function ShardsPage() {
   if (!mounted) return null;
 
   return (
-    <main className="relative z-30 min-h-screen flex flex-col items-center justify-start px-4 py-24 text-center bg-black bg-opacity-80 transition-colors duration-300">
+    <main className="relative z-30 min-h-screen flex flex-col items-center justify-start px-2 sm:px-4 py-16 sm:py-24 text-center bg-black bg-opacity-80 transition-colors duration-300">
       <h2 className="text-3xl font-bold text-white mb-8">🧩 All Shards</h2>
       {shards.length === 0 ? (
         <p className="text-gray-400">No shards found.</p>

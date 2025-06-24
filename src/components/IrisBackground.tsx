@@ -336,7 +336,7 @@ useEffect(() => {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed top-0 left-0 w-full h-full z-[1] pointer-events-none"
+      className="fixed top-0 left-0 w-screen h-screen z-[1] pointer-events-none"
       style={{ backgroundColor: "black" }}
     />
   );

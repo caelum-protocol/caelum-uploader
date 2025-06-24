@@ -14,10 +14,7 @@ import { UploadButton } from "@/components/UploadButton";
 import { StatusIndicator } from "@/components/StatusIndicator";
 
 import { useMemory } from "@/context/MemoryContext";
-// import type { MemoryEntry } from "@/memory";
-// import type { MemoryEntry } from "../memory"; // Update the path as needed to the correct location of MemoryEntry
-// import type { MemoryEntry } from "types/memory"; // Update this path if your MemoryEntry type is located elsewhere
-import type { MemoryEntry } from "../types/memory"; // Update the path as needed to the correct location of MemoryEntry
+import type { MemoryEntry } from "../types/memory"; 
 
 export const FileUpload = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -25,6 +22,7 @@ export const FileUpload = () => {
   const [uploadCost, setUploadCost] = useState<string>("");
   const [txId, setTxId] = useState<string>("");
   const [showCheck, setShowCheck] = useState(false);
+  const [note, setNote] = useState<string>("");
 
   const { addMemory } = useMemory();
 
@@ -62,7 +60,7 @@ export const FileUpload = () => {
       setUploadStatus(`Error: ${(e as Error).message}`);
       toast.error("Failed to retrieve upload cost");
     }
-  }, [getIrys]); // Added getIrys to dependency array for correctness
+  }, [getIrys]);
 
   const handleUpload = async () => {
     if (!file) return toast.error("Please select a file first.");
@@ -92,17 +90,18 @@ export const FileUpload = () => {
         uploadedAt: new Date().toISOString(),
         txId: receipt.id,
         url: `https://gateway.irys.xyz/${receipt.id}`,
+        note: note.trim() || undefined,
         isNew: true,
       };
 
       addMemory(memory);
       
-      // Reset the UI after a short delay
       setTimeout(() => {
         setFile(null);
         setUploadCost("");
         setUploadStatus("");
         setTxId("");
+        setNote("");
       }, 1500);
 
 
@@ -131,7 +130,6 @@ export const FileUpload = () => {
         )}
       </AnimatePresence>
 
-      {/* The full preview and upload control section */}
       {file && (
         <div className="mt-6 space-y-4 max-w-xl mx-auto text-white">
           {uploadCost && (
@@ -142,6 +140,14 @@ export const FileUpload = () => {
               cost={uploadCost}
             />
           )}
+
+           <input
+            type="text"
+            placeholder="Add a note..."
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            className="w-full rounded border px-3 py-2 text-black"
+          />
 
           <StatusIndicator status={uploadStatus} />
 

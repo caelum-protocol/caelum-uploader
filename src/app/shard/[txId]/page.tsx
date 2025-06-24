@@ -59,7 +59,7 @@ export default function ShardPage() {
   };
 
   return (
-     <main className="relative z-30 min-h-screen flex flex-col items-center justify-start px-4 py-24 text-center bg-black bg-opacity-80 transition-colors duration-300">
+     <main className="relative z-30 min-h-screen flex flex-col items-center justify-start px-2 sm:px-4 py-16 sm:py-24 text-center bg-black bg-opacity-80 transition-colors duration-300">
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-white mb-2">
           📦 Shard: <span className="text-purple-300">{txId}</span>

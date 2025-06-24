@@ -76,6 +76,9 @@ export default function MemoryCard({
         <p className="text-sm opacity-80">
           {formatBytes(parseInt(entry.size))} — {entry.type}
         </p>
+        {entry.note && (
+          <p className="text-sm italic mt-1 break-words">{entry.note}</p>
+        )}
         <p className="text-xs opacity-50 mt-1">
           {new Date(entry.uploadedAt).toLocaleString()}
         </p>

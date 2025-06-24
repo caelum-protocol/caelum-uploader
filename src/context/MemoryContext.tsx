@@ -8,18 +8,14 @@ import React, {
   ReactNode,
 } from "react";
 import toast from "react-hot-toast";
-// ✅ CORRECTED IMPORT PATH
-// Update the import path below to the correct relative path where MemoryEntry is defined.
-// For example, if MemoryEntry is in src/types/memory.ts, use:
 import type { MemoryEntry } from "../types/memory";
-// Adjust the path as needed based on your project structure.
+
 
 type MemoryContextType = {
   archive: MemoryEntry[];
   addMemory: (memory: MemoryEntry) => void;
   deleteMemory: (txId: string) => void;
   clearArchive: () => void;
-  // Your advanced features can be added back here
   memoryTrigger: boolean;
   newId: string | null;
   ready: boolean;
@@ -31,7 +27,6 @@ export const MemoryProvider = ({ children }: { children: ReactNode }) => {
   const [archive, setArchive] = useState<MemoryEntry[]>([]);
   const [ready, setReady] = useState(false);
 
-  // Load archive from localStorage on mount
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -54,7 +49,6 @@ export const MemoryProvider = ({ children }: { children: ReactNode }) => {
     setReady(true);
   }, []);
 
-  // Keep localStorage in sync when the archive changes
   useEffect(() => {
     if (!ready || typeof window === "undefined") return;
     localStorage.setItem("caelumMemoryLog", JSON.stringify(archive));
@@ -65,7 +59,6 @@ export const MemoryProvider = ({ children }: { children: ReactNode }) => {
   const addMemory = (memory: MemoryEntry) => {
     const updatedArchive = [memory, ...archive];
     setArchive(updatedArchive);
-    // You can add your trigger logic here
   };
 
   const deleteMemory = (txIdToDelete: string) => {

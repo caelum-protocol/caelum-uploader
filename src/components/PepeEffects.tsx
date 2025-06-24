@@ -32,8 +32,8 @@ export default function PepeEffects() {
     const toScreenX = (x: number) => offsetX + x * scale;
     const toScreenY = (y: number) => offsetY + y * scale;
 
-    const baseX = BASE_WIDTH / 2 + 161;
-    const baseY = BASE_HEIGHT * 0.74;
+    const baseX = BASE_WIDTH / 2 + 159;
+    const baseY = BASE_HEIGHT * 0.745;
 
     const stardustCount = 120;
     const starCount = 80;
@@ -195,7 +195,7 @@ export default function PepeEffects() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed top-0 left-0 w-full h-full z-[1] pointer-events-none"
+      className="fixed top-0 left-0 w-screen h-screen z-[1] pointer-events-none"
       style={{ backgroundColor: "transparent" }}
     />
   );

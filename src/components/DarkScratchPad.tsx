@@ -99,11 +99,11 @@ export default function DarkScratchPad() {
     <>
       <canvas
         ref={canvasRef}
-        className="fixed inset-0 w-full h-full z-0 pointer-events-none"
+        className="fixed inset-0 w-screen h-screen z-0 pointer-events-none"
       />
       <canvas
         ref={overlayRef}
-        className="fixed inset-0 w-full h-full z-1"
+        className="fixed inset-0 w-screen h-screen z-1"
       />
       <button
         onClick={() => setResetKey(Date.now())}
