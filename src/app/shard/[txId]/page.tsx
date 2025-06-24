@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useMemory } from "@/context/MemoryContext";
 import MemoryCard from "@/components/MemoryCard";
+import type { MemoryEntry } from "@/types/memory";
 import formatBytes from "@/utils/formatBytes";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
@@ -13,32 +14,23 @@ import useMounted from "@/utils/useMounted";
 
 export default function ShardPage() {
   const mounted = useMounted();
-  const { archive, ready } = useMemory();
+  const { archive } = useMemory();
   const { txId } = useParams<{ txId: string }>();
 
-   const shardItems = useMemo(() => {
-    if (!ready || !txId) return [];
-    return archive.filter((entry) => entry.txId === txId);
-   }, [txId, archive, ready]);
+  const [shardItems, setShardItems] = useState<MemoryEntry[] | null>(null);
+  const [totalSize, setTotalSize] = useState(0);
 
-    const totalSize = useMemo(
-    () => shardItems.reduce((acc, curr) => acc + parseInt(curr.size), 0),
-    [shardItems]
-  );
+  useEffect(() => {
+    if (!mounted) return;
+    if (txId && archive.length > 0) {
+      const filtered = archive.filter((entry) => entry.txId === txId);
+      setShardItems(filtered);
+      const size = filtered.reduce((acc, curr) => acc + parseInt(curr.size), 0);
+      setTotalSize(size);
+    }
+  }, [txId, archive, mounted]);
 
-   if (!mounted || !ready) {
-    return (
-      <motion.main
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.25 }}
-        className="relative z-30 min-h-screen flex items-center justify-center px-4 py-24 text-center bg-black bg-opacity-80 transition-colors duration-300"
-      >
-        <p className="text-white">Loading shard...</p>
-      </motion.main>
-    );
-  }
+    if (!mounted || !txId || shardItems === null) return null;
 
   const downloadShardZip = async () => {
     const zip = new JSZip();
@@ -65,13 +57,7 @@ export default function ShardPage() {
   };
 
   return (
-     <motion.main
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.25 }}
-      className="relative z-30 min-h-screen flex flex-col items-center justify-start px-4 py-24 text-center bg-black bg-opacity-80 transition-colors duration-300"
-    >
+     <main className="relative z-30 min-h-screen flex flex-col items-center justify-start px-4 py-24 text-center bg-black bg-opacity-80 transition-colors duration-300">
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-white mb-2">
           📦 Shard: <span className="text-purple-300">{txId}</span>
@@ -126,6 +112,6 @@ export default function ShardPage() {
       >
         ⬅ Back to Archive
       </Link>
-    </motion.main>
+    </main>
   );
 }

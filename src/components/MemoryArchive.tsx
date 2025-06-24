@@ -5,7 +5,7 @@ import { useMemory } from "@/context/MemoryContext";
 import MemoryCard from "./MemoryCard";
 import { useTheme } from "@/context/ThemeContext";
 import { inputStylesByTheme, ThemeName } from "@/themeStyles";
-import { AnimatePresence, motion } from "framer-motion"
+import { AnimatePresence } from "framer-motion";
 import useMounted from "@/utils/useMounted";
 
 export const MemoryArchive = () => {
@@ -59,17 +59,11 @@ export const MemoryArchive = () => {
   }, [newId]);
 
   if (!mounted || !ready) {
-    return <p className="mt-10 text-center text-gray-400">Loading archive...</p>;
+     return null;
   }
 
   return (
-      <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.25 }}
-      className="relative z-[5] mt-10 p-4 sm:p-6 rounded-lg max-w-2xl mx-auto theme-archive pointer-events-auto transition-colors duration-300"
-    >
+      <div className="relative z-[5] mt-10 p-4 sm:p-6 rounded-lg max-w-2xl mx-auto theme-archive pointer-events-auto transition-colors duration-300">
       <h2 className="text-xl font-semibold text-center text-cyan-300 mb-4">
         🧠 Archived Memories
       </h2>
@@ -128,7 +122,7 @@ export const MemoryArchive = () => {
           </button>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 };
 

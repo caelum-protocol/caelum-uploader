@@ -6,7 +6,7 @@ import { ThemeClientWrapper } from "@/components/ThemeClientWrapper";
 import { Header } from "@/components/Header";
 import { ThemeBackground } from "@/components/ThemeBackground";
 import { usePathname } from "next/navigation";
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
 import useMounted from "../utils/useMounted";
 import { AnimatePresence, motion } from "framer-motion";
@@ -18,16 +18,6 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
   const mounted = useMounted();
   const { theme } = useTheme();
   const pathname = usePathname();
-  useEffect(() => {
-    document.documentElement.classList.add("overflow-y-hidden");
-    const timer = setTimeout(() => {
-      document.documentElement.classList.remove("overflow-y-hidden");
-    }, 350);
-    return () => {
-      clearTimeout(timer);
-      document.documentElement.classList.remove("overflow-y-hidden");
-    };
-  }, [pathname, theme]);
   const [showLoader, setShowLoader] = useState(() => {
     if (typeof window === "undefined") return true;
     if (sessionStorage.getItem("loaderShown")) {
@@ -57,27 +47,9 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
         <Header />
         <Toaster position="top-right" />
         {showLoader && <LoadingOverlay />}
-
-               <Suspense
-              fallback={
-                <div className="min-h-screen flex items-center justify-center">
-                  <p className="text-gray-400">Loading...</p>
-                </div>
-              }
-            >
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={`${pathname}-${theme}`}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -15 }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="min-h-screen transition-colors duration-300"
-                >
-                  {children}
-                </motion.div>
-              </AnimatePresence>
-            </Suspense>
+               <AnimatePresence mode="wait" initial={false}>
+                {children}
+            </AnimatePresence>
           </Web3Provider>
     </ThemeClientWrapper>
   );

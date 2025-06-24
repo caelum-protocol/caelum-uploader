@@ -34,19 +34,23 @@ export const MemoryProvider = ({ children }: { children: ReactNode }) => {
   // Load archive from localStorage on mount
   useEffect(() => {
     if (typeof window === "undefined") return;
+
     const saved = localStorage.getItem("caelumMemoryLog");
+    let parsed: MemoryEntry[] = [];
+
     if (saved) {
       try {
-        const parsed = JSON.parse(saved) as MemoryEntry[];
+        parsed = JSON.parse(saved) as MemoryEntry[];
         parsed.sort(
           (a, b) =>
             new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
         );
-        setArchive(parsed);
       } catch (error) {
         console.error("Failed to load memory log from storage", error);
       }
     }
+
+    setArchive(parsed);
     setReady(true);
   }, []);
 

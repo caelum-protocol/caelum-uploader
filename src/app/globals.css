@@ -12,8 +12,7 @@ body {
 /* === THEME DEFINITIONS === */
 
 .dark {
-  --drop-border: #888;
-  background-color: #0a0a0a;
+  background-color: #000000;
   color: #ffffff;
   font-family: 'Courier New', monospace;
 }
@@ -60,14 +59,14 @@ body {
 
 /* === IRIS === */
 .iris {
-  background: radial-gradient(circle at top, #1a1a2e, #000000 70%);
+  background-color: black;
   color: #e0d5ff;
   font-family: 'Geist', sans-serif;
   --drop-border: #ebe4ff;
 }
 
 .iris .theme-card {
-  background-color: rgba(255, 255, 255, 0.205);
+  background-color: rgba(255, 255, 255, 0.164);
   @apply backdrop-blur-md;
 }
 @keyframes irisPulse {
