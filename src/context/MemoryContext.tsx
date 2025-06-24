@@ -27,40 +27,40 @@ type MemoryContextType = {
 const MemoryContext = createContext<MemoryContextType | undefined>(undefined);
 
 export const MemoryProvider = ({ children }: { children: ReactNode }) => {
-   const [archive, setArchive] = useState<MemoryEntry[]>([]);
-
-  // Load archive from localStorage on mount so that the first render
-  // is identical between server and client. This prevents hydration
-  // mismatches when memories exist in localStorage.
-  useEffect(() => {
+    const [archive, setArchive] = useState<MemoryEntry[]>(() => {
+    if (typeof window === "undefined") return [];
     try {
       const saved = localStorage.getItem("caelumMemoryLog");
-      if (saved) {
-        const parsedLog = JSON.parse(saved) as MemoryEntry[];
-        parsedLog.sort(
-          (a, b) =>
-            new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
-        );
-        setArchive(parsedLog);
-      }
+      if (!saved) return [];
+      const parsed = JSON.parse(saved) as MemoryEntry[];
+      parsed.sort(
+        (a, b) =>
+          new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
+      );
+      return parsed;
     } catch (error) {
       console.error("Failed to load memory log from storage", error);
+       return [];
     }
-  }, []);
+  });
+
+  // Keep localStorage in sync when the archive changes
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    localStorage.setItem("caelumMemoryLog", JSON.stringify(archive));
+  }, [archive]);
   const [memoryTrigger, setMemoryTrigger] = useState(false);
   const [newId, setNewId] = useState<string | null>(null);
 
   const addMemory = (memory: MemoryEntry) => {
     const updatedArchive = [memory, ...archive];
     setArchive(updatedArchive);
-    localStorage.setItem("caelumMemoryLog", JSON.stringify(updatedArchive));
     // You can add your trigger logic here
   };
 
   const deleteMemory = (txIdToDelete: string) => {
     const updatedArchive = archive.filter((e) => e.txId !== txIdToDelete);
     setArchive(updatedArchive);
-    localStorage.setItem("caelumMemoryLog", JSON.stringify(updatedArchive));
     toast.success("Memory deleted.");
   };
 

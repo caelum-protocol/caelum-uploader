@@ -10,27 +10,25 @@ import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
+import useMounted from "@/utils/useMounted";
 
 export default function ShardPage() {
+  const mounted = useMounted();
   const { archive } = useMemory();
   const { txId } = useParams<{ txId: string }>();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const [shardItems, setShardItems] = useState<MemoryEntry[] | null>(null);
   const [totalSize, setTotalSize] = useState(0);
 
   useEffect(() => {
+    if (!mounted) return;
     if (txId && archive.length > 0) {
       const filtered = archive.filter((entry) => entry.txId === txId);
       setShardItems(filtered);
       const size = filtered.reduce((acc, curr) => acc + parseInt(curr.size), 0);
       setTotalSize(size);
     }
-  }, [txId, archive]);
+  }, [txId, archive, mounted]);
 
   if (!mounted || !txId || shardItems === null) return null;
 
@@ -92,7 +90,7 @@ export default function ShardPage() {
         <p className="text-red-400 text-lg mb-12">No memories found for this shard.</p>
       ) : (
         <ul className="w-full max-w-3xl flex flex-col items-center justify-center gap-6 mt-6">
-          <AnimatePresence>
+          <AnimatePresence initial={false}>
             {shardItems.map((entry) => (
               <motion.li
                 key={entry.txId + entry.fileName}
