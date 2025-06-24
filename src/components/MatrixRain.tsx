@@ -1,11 +1,14 @@
 // MatrixRain.tsx — Final Fixed Density Version (v1.0.1 with Layer Fix)
 "use client";
 import { useEffect, useRef } from "react";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 export default function MatrixRain() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const reduceMotion = usePrefersReducedMotion();
 
   useEffect(() => {
+    if (reduceMotion) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -59,6 +62,7 @@ export default function MatrixRain() {
     };
   }, []);
 
+  if (reduceMotion) return null;
   return (
     <canvas
       ref={canvasRef}

@@ -17,14 +17,19 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const { playThemeSwitch } = useAppSounds();
   const isFirstRender = useRef(true);
 
-  // After mount, read the saved theme from localStorage. This avoids
-  // hydration mismatches when the user previously selected a different
-  // theme in the browser.
+  // After mount, resolve the actual theme from localStorage or the existing
+  // <html> class set by the theme-loader script. This keeps the first client
+  // render in sync with the server markup and avoids hydration warnings.
   useEffect(() => {
     try {
       const saved = localStorage.getItem("caelumTheme") as Theme | null;
       const validThemes: Theme[] = ["dark", "iris", "matrix", "pepe"];
-      const initial = saved && validThemes.includes(saved) ? saved : "dark";
+      const rootClass = document.documentElement.className as Theme;
+      const initial = saved && validThemes.includes(saved)
+        ? saved
+        : validThemes.includes(rootClass)
+        ? rootClass
+        : "dark";
       setThemeState(initial);
       document.documentElement.className = initial;
     } catch {

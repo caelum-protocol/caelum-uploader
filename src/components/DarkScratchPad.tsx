@@ -1,14 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { RefreshCcw } from "lucide-react";
 
 export default function DarkScratchPad() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const overlayRef = useRef<HTMLCanvasElement>(null);
   const [resetKey, setResetKey] = useState(Date.now());
+  const reduceMotion = usePrefersReducedMotion();
 
   useEffect(() => {
+    if (reduceMotion) return;
     const canvas = canvasRef.current!;
     const overlay = overlayRef.current!;
     const ctx = canvas.getContext("2d")!;
@@ -91,6 +94,7 @@ export default function DarkScratchPad() {
     };
   }, [resetKey]);
 
+  if (reduceMotion) return null;
   return (
     <>
       <canvas

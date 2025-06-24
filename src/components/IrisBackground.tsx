@@ -1,10 +1,12 @@
 // Iris v1.5.7.7 — The Spirit Set: Memory Echo Shards + Star Pulse + Inward Drift
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import type { MemoryEntry } from "@/types/memory";
 
 export default function IrisBackground({ memoryCount, memoryTrigger, archive }: { memoryCount: number; memoryTrigger: boolean; archive: MemoryEntry[] }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const reduceMotion = usePrefersReducedMotion();
   const [currentWhisper, setCurrentWhisper] = useState("Silence is where thoughts bloom.");
   const [fadeAlpha, setFadeAlpha] = useState(1);
   const [pulseLevel, setPulseLevel] = useState(0);
@@ -36,6 +38,7 @@ export default function IrisBackground({ memoryCount, memoryTrigger, archive }: 
   ];
 
   useEffect(() => {
+    if (reduceMotion) return;
     const interval = setInterval(() => {
       setStarTint(s => Math.max(s - 0.02, 0));
     }, 33);
@@ -43,6 +46,7 @@ export default function IrisBackground({ memoryCount, memoryTrigger, archive }: 
   }, []);
 
   useEffect(() => {
+    if (reduceMotion) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -269,6 +273,7 @@ export default function IrisBackground({ memoryCount, memoryTrigger, archive }: 
   }, [memoryCount]);
   
 useEffect(() => {
+  if (reduceMotion) return;
   const resize = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -296,6 +301,7 @@ useEffect(() => {
   }, [memoryTrigger]);
 
   useEffect(() => {
+    if (reduceMotion) return;
     const interval = setInterval(() => {
       const quote = forceWhisper || (archive.length > 0
         ? (archive.slice(-12)[Math.floor(Math.random() * Math.min(12, archive.length))]?.fileName || "")
@@ -310,6 +316,7 @@ useEffect(() => {
   }, [forceWhisper, archive]);
 
   useEffect(() => {
+    if (reduceMotion) return;
     const move = (e: MouseEvent) => {
       const x = e.clientX;
       const y = e.clientY;
@@ -325,11 +332,12 @@ useEffect(() => {
     return () => window.removeEventListener("mousemove", move);
   }, []);
 
- return (
-  <canvas
-    ref={canvasRef}
-    className="fixed top-0 left-0 w-full h-full z-[1] pointer-events-none"
-    style={{ backgroundColor: "black" }}
-  />
-);
+ if (reduceMotion) return null;
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed top-0 left-0 w-full h-full z-[1] pointer-events-none"
+      style={{ backgroundColor: "black" }}
+    />
+  );
 }
