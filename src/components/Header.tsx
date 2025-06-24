@@ -1,13 +1,16 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { ConnectKitButton } from "connectkit";
 import { useAccount, useChainId } from "wagmi";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useSoundEnabled } from "@/context/SoundContext";
 
 export const Header = () => {
   const { isConnected } = useAccount();
   const chainId = useChainId();
+  const { soundOn, toggleSound } = useSoundEnabled();
 
   // Show switch button if user is connected AND not on Polygon (137)
   const isWrongNetwork =
@@ -67,6 +70,18 @@ export const Header = () => {
 
       <div className="flex items-center gap-3">
         <ThemeToggle />
+        <button
+          onClick={toggleSound}
+          className="text-sm px-3 py-1 rounded-md border border-cyan-400 text-cyan-300 hover:bg-cyan-800 transition"
+        >
+          Sound: {soundOn ? "\ud83d\udd0a On" : "\ud83d\udd07 Off"}
+        </button>
+        <Link
+          href="/shards"
+          className="text-cyan-400 text-sm hover:underline hidden sm:inline"
+        >
+          View Shards
+        </Link>
         {isWrongNetwork && (
           <button
             onClick={handleSwitchNetwork}

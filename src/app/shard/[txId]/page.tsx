@@ -8,6 +8,7 @@ import type { MemoryEntry } from "@/types/memory";
 import formatBytes from "@/utils/formatBytes";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
+import toast from "react-hot-toast";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import useMounted from "@/utils/useMounted";
@@ -54,6 +55,7 @@ export default function ShardPage() {
     zip.file("metadata.json", JSON.stringify(metadata, null, 2));
     const content = await zip.generateAsync({ type: "blob" });
     saveAs(content, `shard-${txId}.zip`);
+    toast.success("\uD83D\uDCBE Downloaded shard!");
   };
 
   return (

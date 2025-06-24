@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useTheme } from "@/context/ThemeContext";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import JsonPreviewModal from "./JsonPreviewModal";
 
 interface MemoryCardProps {
@@ -133,7 +134,9 @@ export default function MemoryCard({
             onClick={async () => {
               if (isNew) return;
               const res = await mintToShard(entry);
-              alert(`✅ Mint simulated!\nTx ID: ${res.txId}`);
+              if (res.success) {
+                toast.success("\u2705 Minted successfully!");
+              }
             }}
             className={`text-purple-400 text-sm hover:underline ${
               isNew ? "opacity-50 cursor-not-allowed" : ""

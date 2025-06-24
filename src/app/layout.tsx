@@ -5,6 +5,7 @@ import Script from "next/script";
 import LayoutClient from "./layoutClient";
 import { MemoryProvider } from "@/context/MemoryContext";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { SoundProvider } from "@/context/SoundContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,11 +24,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         className={`${inter.className} transition-colors duration-300`}
         suppressHydrationWarning
       >
-         <ThemeProvider>
-          <MemoryProvider>
-            <LayoutClient>{children}</LayoutClient>
-          </MemoryProvider>
-        </ThemeProvider>
+         <SoundProvider>
+          <ThemeProvider>
+            <MemoryProvider>
+              <LayoutClient>{children}</LayoutClient>
+            </MemoryProvider>
+          </ThemeProvider>
+        </SoundProvider>
       </body>
     </html>
   );

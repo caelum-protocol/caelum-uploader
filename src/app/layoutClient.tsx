@@ -46,6 +46,13 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
         <ThemeBackground />
         <Header />
         <Toaster position="top-right" />
+        <Toaster
+          position="bottom-right"
+          toastOptions={{
+            className: "bg-gray-800 text-white",
+            success: { iconTheme: { primary: "#22c55e", secondary: "#1e293b" } },
+          }}
+        />
         {showLoader && <LoadingOverlay />}
                <AnimatePresence mode="wait" initial={false}>
                 {children}
