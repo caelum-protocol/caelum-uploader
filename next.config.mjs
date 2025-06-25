@@ -5,6 +5,7 @@ const nextConfig = {
       ...config.output.environment,
       module: true, // enable ESM for workers
     };
+    config.output.globalObject = "self";
     return config;
   },
 };

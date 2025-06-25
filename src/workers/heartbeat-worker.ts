@@ -1,5 +1,4 @@
 /// <reference lib="webworker" />
-export {};
 
 const HEARTBEAT_INTERVAL = 30000;
 let timer: ReturnType<typeof setInterval> | undefined;
