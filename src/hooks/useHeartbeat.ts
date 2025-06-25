@@ -4,21 +4,25 @@ export default function useHeartbeat() {
   const workerRef = useRef<Worker | null>(null);
 
   useEffect(() => {
-    const worker = new Worker(
-      new URL('../workers/heartbeat.worker.ts', import.meta.url),
-      { type: 'module' }
-    );
+    const worker = new Worker(new URL("../workers/heartbeat.worker.ts", import.meta.url), {
+      type: "module",
+    });
+
+    worker.postMessage("start");
     workerRef.current = worker;
 
     const stop = () => {
-      worker.postMessage('stop');
-      worker.terminate();
+      if (workerRef.current) {
+        workerRef.current.postMessage("stop");
+        workerRef.current.terminate();
+        workerRef.current = null;
+      }
     };
 
-    window.addEventListener('beforeunload', stop);
+    window.addEventListener("beforeunload", stop);
     return () => {
       stop();
-      window.removeEventListener('beforeunload', stop);
+      window.removeEventListener("beforeunload", stop);
     };
   }, []);
 
