@@ -13,7 +13,7 @@
 
 ## Demo
 
-![App screenshot](./docs/demo.png)
+![Screenshot_1](https://github.com/user-attachments/assets/abf778d4-d1fa-45f4-bad0-43e5c3d5fcb2)
 
 *A glimpse of the Matrix theme with active shard view.*
 
@@ -89,3 +89,5 @@ This project is licensed under the MIT License.
 ## Credits
 
 Built with **irys/sdk**, **Next.js**, **React**, **Tailwind CSS**, **Framer Motion**, **React Hot Toast**, and **use‑sound**.
+
+Please Credit Me If You Use My Work in Your Project

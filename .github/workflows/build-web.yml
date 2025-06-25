@@ -1,0 +1,23 @@
+name: Build Web
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install deps
+        run: npm install
+      - name: Build
+        run: npm run build
+      - name: Export static site
+        run: npx next export
+      - name: Archive output
+        uses: actions/upload-artifact@v3
+        with:
+          name: web-dist
+          path: out
