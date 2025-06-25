@@ -22,4 +22,4 @@ self.addEventListener('message', (event) => {
   }
 });
 
-start();;
+start();

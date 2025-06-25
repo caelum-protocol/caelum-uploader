@@ -35,21 +35,14 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
   }, []);
 
   useEffect(() => {
-    let worker: Worker | undefined;
-    let stopped = false;
-    import("@/workers/HeartbeatWorker.ts?worker").then(({ default: HeartbeatWorker }) => {
-      if (!stopped) {
-        worker = new HeartbeatWorker();
-      }
-    });
+   const worker = new Worker(
+      new URL("../workers/heartbeat.worker.ts", import.meta.url),
+      { type: "module" }
+    );
 
     const stop = () => {
-      if (worker) {
-        worker.postMessage("stop");
-        worker.terminate();
-        worker = undefined;
-      }
-      stopped = true;
+      worker.postMessage("stop");
+      worker.terminate();
     };
 
     window.addEventListener("beforeunload", stop);
