@@ -5,15 +5,22 @@ export default function useHeartbeat() {
 
   useEffect(() => {
     const worker = new Worker(
-      new URL("../workers/heartbeat.worker.ts", import.meta.url),
-      { type: "module" }
+      new URL('../workers/heartbeat.worker.ts', import.meta.url),
+      { type: 'module' }
     );
-    worker.postMessage("start");
     workerRef.current = worker;
 
-    return () => {
-      worker.postMessage("stop");
+    const stop = () => {
+      worker.postMessage('stop');
       worker.terminate();
     };
+
+    window.addEventListener('beforeunload', stop);
+    return () => {
+      stop();
+      window.removeEventListener('beforeunload', stop);
+    };
   }, []);
+
+  return workerRef;
 }

@@ -9,11 +9,13 @@ import { useEffect, useState } from "react";
 import useMounted from "../utils/useMounted";
 import { AnimatePresence } from "framer-motion";
 import LoadingOverlay from "@/components/LoadingOverlay";
+import useHeartbeat from "@/hooks/useHeartbeat";
 
 let hasShownLoader = false;
 
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
   const mounted = useMounted();
+  useHeartbeat();
   const [showLoader, setShowLoader] = useState(() => {
     if (typeof window === "undefined") return true;
     if (sessionStorage.getItem("loaderShown")) {
@@ -33,24 +35,6 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
       return () => clearTimeout(timer);
     }
   }, []);
-
-  useEffect(() => {
-   const worker = new Worker(
-      new URL("../workers/heartbeat.worker.ts", import.meta.url),
-      { type: "module" }
-    );
-
-    const stop = () => {
-      worker.postMessage("stop");
-      worker.terminate();
-    };
-
-    window.addEventListener("beforeunload", stop);
-    return () => {
-      stop();
-      window.removeEventListener("beforeunload", stop);
-    };
-  }, []);
   
   if (!mounted) return null;
 
@@ -68,11 +52,10 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
           }}
         />
         {showLoader && <LoadingOverlay />}
-               <AnimatePresence mode="wait" initial={false}>
-                {children}
-            </AnimatePresence>
-          </Web3Provider>
+          <AnimatePresence mode="wait" initial={false}>
+            {children}
+          </AnimatePresence>
+        </Web3Provider>
     </ThemeClientWrapper>
   );
 }
-
