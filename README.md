@@ -13,7 +13,7 @@
 
 ## Demo
 
-![App screenshot](docs/demo.png)
+![App screenshot](./docs/demo.png)
 
 *A glimpse of the Matrix theme with active shard view.*
 
