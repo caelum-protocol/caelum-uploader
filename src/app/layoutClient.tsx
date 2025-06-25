@@ -5,19 +5,15 @@ import { Toaster } from "react-hot-toast";
 import { ThemeClientWrapper } from "@/components/ThemeClientWrapper";
 import { Header } from "@/components/Header";
 import { ThemeBackground } from "@/components/ThemeBackground";
-import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useTheme } from "@/context/ThemeContext";
 import useMounted from "../utils/useMounted";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import LoadingOverlay from "@/components/LoadingOverlay";
 
 let hasShownLoader = false;
 
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
   const mounted = useMounted();
-  const { theme } = useTheme();
-  const pathname = usePathname();
   const [showLoader, setShowLoader] = useState(() => {
     if (typeof window === "undefined") return true;
     if (sessionStorage.getItem("loaderShown")) {
@@ -31,13 +27,38 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
     if (!hasShownLoader) {
       const timer = setTimeout(() => {
         hasShownLoader = true;
-      sessionStorage.setItem("loaderShown", "true");
+        sessionStorage.setItem("loaderShown", "true");
         setShowLoader(false);
       }, 1500);
       return () => clearTimeout(timer);
     }
   }, []);
 
+  useEffect(() => {
+    let worker: Worker | undefined;
+    let stopped = false;
+    import("@/workers/HeartbeatWorker.ts?worker").then(({ default: HeartbeatWorker }) => {
+      if (!stopped) {
+        worker = new HeartbeatWorker();
+      }
+    });
+
+    const stop = () => {
+      if (worker) {
+        worker.postMessage("stop");
+        worker.terminate();
+        worker = undefined;
+      }
+      stopped = true;
+    };
+
+    window.addEventListener("beforeunload", stop);
+    return () => {
+      stop();
+      window.removeEventListener("beforeunload", stop);
+    };
+  }, []);
+  
   if (!mounted) return null;
 
   return (
