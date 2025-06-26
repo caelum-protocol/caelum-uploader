@@ -9,13 +9,18 @@ import { useEffect, useState } from "react";
 import useMounted from "../utils/useMounted";
 import { AnimatePresence } from "framer-motion";
 import LoadingOverlay from "@/components/LoadingOverlay";
-import useHeartbeat from "@/hooks/useHeartbeat";
+import { useHeartbeat } from "@/hooks/useHeartbeat"; // ✅ Use named import
 
 let hasShownLoader = false;
 
-export default function LayoutClient({ children }: { children: React.ReactNode }) {
+type LayoutClientProps = {
+  children: React.ReactNode;
+};
+
+export default function LayoutClient({ children }: LayoutClientProps) {
   const mounted = useMounted();
-  useHeartbeat();
+  useHeartbeat(); // ✅ Call the hook (optionally add a callback: useHeartbeat(ts => ...))
+
   const [showLoader, setShowLoader] = useState(() => {
     if (typeof window === "undefined") return true;
     if (sessionStorage.getItem("loaderShown")) {
@@ -24,7 +29,7 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
     }
     return !hasShownLoader;
   });
-   
+
   useEffect(() => {
     if (!hasShownLoader) {
       const timer = setTimeout(() => {
@@ -35,7 +40,7 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
       return () => clearTimeout(timer);
     }
   }, []);
-  
+
   if (!mounted) return null;
 
   return (
@@ -52,10 +57,10 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
           }}
         />
         {showLoader && <LoadingOverlay />}
-          <AnimatePresence mode="wait" initial={false}>
-            {children}
-          </AnimatePresence>
-        </Web3Provider>
+        <AnimatePresence mode="wait" initial={false}>
+          {children}
+        </AnimatePresence>
+      </Web3Provider>
     </ThemeClientWrapper>
   );
 }

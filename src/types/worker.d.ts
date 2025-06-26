@@ -1,6 +1,7 @@
-/// <reference lib="webworker" />
-
-declare module '*.worker.ts' {
-  const WorkerFactory: new () => Worker;
-  export default WorkerFactory;
+// src/types/worker.d.ts
+declare module 'worker-loader!*' {
+  class WebpackWorker extends Worker {
+    constructor();
+  }
+  export default WebpackWorker;
 }

@@ -1,11 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Add this webpack config:
   webpack(config) {
-    config.output.environment = {
-      ...config.output.environment,
-      module: true, // enable ESM for workers
-    };
-    config.output.globalObject = "self";
+    // Exclude Coinbase HeartbeatWorker from Terser/minification
+    config.module.rules.push({
+      test: /HeartbeatWorker\.js$/,
+      issuer: /@coinbase[\\/]wallet-sdk/,
+      use: [
+        {
+          loader: 'ignore-loader'
+        }
+      ]
+    });
     return config;
   },
 };
