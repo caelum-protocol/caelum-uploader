@@ -17,7 +17,9 @@ export const Header = () => {
     isConnected && typeof chainId === "number" && chainId !== 137;
 
   const handleSwitchNetwork = async () => {
+    if (typeof window === "undefined" || !window.ethereum) return;
     try {
+      // Window check ensures this logic only runs in the browser for SSR safety
       await window.ethereum.request({
         method: "wallet_switchEthereumChain",
         params: [{ chainId: "0x89" }], // Polygon Mainnet

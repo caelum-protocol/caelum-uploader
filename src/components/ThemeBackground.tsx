@@ -34,6 +34,8 @@ export const ThemeBackground = () => {
   const { memoryTrigger, archive } = useMemory();
 
   useEffect(() => {
+    if (typeof document === "undefined") return;
+    // Document check ensures body class manipulation only runs client-side
     const body = document.body;
     body.classList.remove("theme-pepe", "theme-dark", "theme-matrix", "theme-iris");
     if (theme) body.classList.add(`theme-${theme}`);

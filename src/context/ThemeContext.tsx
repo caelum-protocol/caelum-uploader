@@ -21,6 +21,8 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   // <html> class set by the theme-loader script. This keeps the first client
   // render in sync with the server markup and avoids hydration warnings.
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    // Resolve theme from storage only in the browser for SSR compatibility
     try {
       const saved = localStorage.getItem("caelumTheme") as Theme | null;
       const validThemes: Theme[] = ["dark", "iris", "matrix", "pepe"];
@@ -39,6 +41,8 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Apply theme class whenever it changes.
   useEffect(() => {
+    if (typeof document === "undefined") return;
+    // Apply theme class client-side only
     document.documentElement.className = theme;
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -48,9 +52,12 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   }, [theme, playThemeSwitch]);
 
   const setTheme = (newTheme: Theme) => {
-    localStorage.setItem("caelumTheme", newTheme);
+    if (typeof window !== "undefined") {
+      // Persist user theme preference client-side only
+      localStorage.setItem("caelumTheme", newTheme);
+      document.documentElement.className = newTheme;
+    }
     setThemeState(newTheme);
-    document.documentElement.className = newTheme;
   };
 
   return (

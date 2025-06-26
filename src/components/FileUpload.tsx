@@ -27,7 +27,9 @@ export const FileUpload = () => {
   const { addMemory } = useMemory();
 
   const getIrys = useCallback(async () => {
-    if (!window.ethereum) throw new Error("No crypto wallet found");
+    if (typeof window === "undefined" || !window.ethereum)
+      throw new Error("No crypto wallet found");
+    // Window check keeps wallet access client-only for Next.js/SSR
     const provider = new providers.Web3Provider(window.ethereum);
     const irys = new WebIrys({
       network: "mainnet",

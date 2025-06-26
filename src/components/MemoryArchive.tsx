@@ -19,7 +19,10 @@ export const MemoryArchive = () => {
   const listRef = useRef<HTMLDivElement>(null);
 
   const handleCopy = (url: string, txId: string) => {
-    navigator.clipboard.writeText(url);
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      // Ensure clipboard access only runs client-side for Next.js/SSR
+      navigator.clipboard.writeText(url);
+    }
     setCopiedId(txId);
     setTimeout(() => setCopiedId(null), 2000);
   };

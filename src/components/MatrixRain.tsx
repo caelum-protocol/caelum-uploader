@@ -8,7 +8,7 @@ export default function MatrixRain() {
   const reduceMotion = usePrefersReducedMotion();
 
   useEffect(() => {
-    if (reduceMotion) return;
+    if (reduceMotion || typeof window === "undefined") return; // window check for SSR safety
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");

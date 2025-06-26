@@ -28,7 +28,10 @@ export default function LayoutClient({ children }: LayoutClientProps) {
   useEffect(() => {
     if (showLoader) {
       const timer = setTimeout(() => {
-        sessionStorage.setItem("loaderShown", "true");
+        if (typeof window !== "undefined") {
+          // Persist loader flag client-side only for Next.js SSR
+          sessionStorage.setItem("loaderShown", "true");
+        }
         setShowLoader(false);
       }, 1500);
       return () => clearTimeout(timer);

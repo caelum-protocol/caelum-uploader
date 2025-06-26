@@ -12,6 +12,8 @@ export const SoundProvider = ({ children }: { children: React.ReactNode }) => {
   const [soundOn, setSoundOn] = useState(true);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    // Access localStorage only in the browser for Next.js SSR safety
     try {
       const stored = localStorage.getItem("caelumSoundOn");
       if (stored !== null) setSoundOn(stored === "true");
@@ -19,6 +21,8 @@ export const SoundProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    // Persist sound setting in localStorage client-side only
     try {
       localStorage.setItem("caelumSoundOn", soundOn ? "true" : "false");
     } catch {}

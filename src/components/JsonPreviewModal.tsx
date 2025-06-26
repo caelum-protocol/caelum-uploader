@@ -22,6 +22,7 @@ export default function JsonPreviewModal({
       )
       .catch(() => setContent("Failed to load JSON"));
   }, [url]);
+  if (typeof document === "undefined") return null; // SSR safety: document only on client
 
   return createPortal(
     <AnimatePresence>
@@ -51,6 +52,6 @@ export default function JsonPreviewModal({
         </motion.div>
       </motion.div>
     </AnimatePresence>,
-    document.body // 👈 Renders it OUTSIDE of the card container
+    document.body // Renders outside card container safely on client
   );
 }

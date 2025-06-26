@@ -11,7 +11,7 @@ export default function DarkScratchPad() {
   const reduceMotion = usePrefersReducedMotion();
 
   useEffect(() => {
-    if (reduceMotion) return;
+    if (reduceMotion || typeof window === "undefined") return;
     const canvas = canvasRef.current!;
     const overlay = overlayRef.current!;
     const ctx = canvas.getContext("2d")!;

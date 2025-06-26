@@ -49,7 +49,7 @@ export default function IrisBackground({ memoryCount, memoryTrigger, archive }: 
   // eslint-disable-next-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (reduceMotion) return;
+    if (reduceMotion || typeof window === "undefined") return; // window check for SSR safet
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -279,7 +279,7 @@ export default function IrisBackground({ memoryCount, memoryTrigger, archive }: 
   }, [memoryCount, reduceMotion]);
   
 useEffect(() => {
-  if (reduceMotion) return;
+  if (reduceMotion || typeof window === "undefined") return; // window check for SSR safety
   const resize = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -323,7 +323,7 @@ useEffect(() => {
   }, [forceWhisper, archive, reduceMotion, quotes]);
 
   useEffect(() => {
-    if (reduceMotion) return;
+    if (reduceMotion || typeof window === "undefined") return; // window check for SSR safety
     const move = (e: MouseEvent) => {
       const x = e.clientX;
       const y = e.clientY;
