@@ -92,7 +92,7 @@ export default function DarkScratchPad() {
     return () => {
       window.removeEventListener("resize", resize);
     };
-  }, [resetKey]);
+  }, [resetKey, reduceMotion]);
 
   if (reduceMotion) return null;
   return (

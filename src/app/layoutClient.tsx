@@ -11,35 +11,29 @@ import { AnimatePresence } from "framer-motion";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import { useHeartbeat } from "@/hooks/useHeartbeat"; // ✅ Use named import
 
-let hasShownLoader = false;
-
 type LayoutClientProps = {
   children: React.ReactNode;
 };
 
 export default function LayoutClient({ children }: LayoutClientProps) {
   const mounted = useMounted();
-  useHeartbeat(); // ✅ Call the hook (optionally add a callback: useHeartbeat(ts => ...))
+  useHeartbeat();
 
+  // Use only showLoader and sessionStorage
   const [showLoader, setShowLoader] = useState(() => {
     if (typeof window === "undefined") return true;
-    if (sessionStorage.getItem("loaderShown")) {
-      hasShownLoader = true;
-      return false;
-    }
-    return !hasShownLoader;
+    return !sessionStorage.getItem("loaderShown");
   });
 
   useEffect(() => {
-    if (!hasShownLoader) {
+    if (showLoader) {
       const timer = setTimeout(() => {
-        hasShownLoader = true;
         sessionStorage.setItem("loaderShown", "true");
         setShowLoader(false);
       }, 1500);
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [showLoader]);
 
   if (!mounted) return null;
 

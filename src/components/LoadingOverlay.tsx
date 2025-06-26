@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 export default function LoadingOverlay() {
   const [visible, setVisible] = useState(true);
@@ -23,10 +24,12 @@ export default function LoadingOverlay() {
         fadeOut ? "opacity-0" : "opacity-100"
       } bg-black`}
     >
-      <img
+      <Image
         src="/CaelumLogo.png"
         alt="Loading..."
-        className="w-24 h-24 animate-pulse"
+        width={96}
+        height={96}
+        className="animate-pulse"
       />
     </div>
   );

@@ -53,8 +53,8 @@ export const MemoryProvider = ({ children }: { children: ReactNode }) => {
     if (!ready || typeof window === "undefined") return;
     localStorage.setItem("caelumMemoryLog", JSON.stringify(archive));
   }, [archive, ready]);
-  const [memoryTrigger, setMemoryTrigger] = useState(false);
-  const [newId, setNewId] = useState<string | null>(null);
+  const [memoryTrigger] = useState(false);
+  const [newId] = useState<string | null>(null);
 
   const addMemory = (memory: MemoryEntry) => {
     const updatedArchive = [memory, ...archive];

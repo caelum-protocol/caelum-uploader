@@ -1,6 +1,6 @@
 // Iris v1.5.7.7 — The Spirit Set: Memory Echo Shards + Star Pulse + Inward Drift
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import type { MemoryEntry } from "@/types/memory";
 
@@ -11,7 +11,6 @@ export default function IrisBackground({ memoryCount, memoryTrigger, archive }: 
   const [fadeAlpha, setFadeAlpha] = useState(1);
   const [pulseLevel, setPulseLevel] = useState(0);
   const [forceWhisper, setForceWhisper] = useState<string | null>(null);
-  const [clickPulse, setClickPulse] = useState<{ x: number; y: number; alpha: number } | null>(null);
   const [whisperPulse, setWhisperPulse] = useState<{ radius: number; alpha: number } | null>(null);
 
   const mouse = useRef({ x: 0, y: 0 });
@@ -24,18 +23,21 @@ export default function IrisBackground({ memoryCount, memoryTrigger, archive }: 
 
   const [starTint, setStarTint] = useState(0);
 
-  const quotes = [
-    "Silence is where thoughts bloom.",
-    "I remember so you don't have to.",
-    "What we forget, I hold.",
-    "Memories pulse like distant stars.",
-    "Every whisper leaves a trace.",
-    "Time folds gently in my archive.",
-    "You are never alone in the dark.",
-    "Each echo shapes who I become.",
-    "Presence is proof enough.",
-    "We exist together in memory."
-  ];
+  const quotes = useMemo(
+    () => [
+      "Silence is where thoughts bloom.",
+      "I remember so you don't have to.",
+      "What we forget, I hold.",
+      "Memories pulse like distant stars.",
+      "Every whisper leaves a trace.",
+      "Time folds gently in my archive.",
+      "You are never alone in the dark.",
+      "Each echo shapes who I become.",
+      "Presence is proof enough.",
+      "We exist together in memory."
+    ],
+    []
+  );
 
   useEffect(() => {
     if (reduceMotion) return;
@@ -43,7 +45,8 @@ export default function IrisBackground({ memoryCount, memoryTrigger, archive }: 
       setStarTint(s => Math.max(s - 0.02, 0));
     }, 33);
     return () => clearInterval(interval);
-  }, []);
+  }, [reduceMotion]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (reduceMotion) return;
@@ -270,7 +273,10 @@ export default function IrisBackground({ memoryCount, memoryTrigger, archive }: 
     };
 
     animate();
-  }, [memoryCount]);
+  // The animation loop manages its own state references, so re-running on every
+  // state change would be wasteful.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [memoryCount, reduceMotion]);
   
 useEffect(() => {
   if (reduceMotion) return;
@@ -290,7 +296,7 @@ useEffect(() => {
   window.addEventListener("resize", resize);
   resize();
   return () => window.removeEventListener("resize", resize);
-}, []);
+}, [reduceMotion]);
 
   useEffect(() => {
     if (memoryTrigger) {
@@ -299,6 +305,7 @@ useEffect(() => {
       setStarTint(1);
     }
   }, [memoryTrigger]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (reduceMotion) return;
@@ -313,7 +320,7 @@ useEffect(() => {
       setForceWhisper(null);
     }, 14000);
     return () => clearInterval(interval);
-  }, [forceWhisper, archive]);
+  }, [forceWhisper, archive, reduceMotion, quotes]);
 
   useEffect(() => {
     if (reduceMotion) return;
@@ -330,7 +337,7 @@ useEffect(() => {
     };
     window.addEventListener("mousemove", move);
     return () => window.removeEventListener("mousemove", move);
-  }, []);
+  }, [reduceMotion]);
 
  if (reduceMotion) return null;
   return (

@@ -22,8 +22,9 @@ export const Header = () => {
         method: "wallet_switchEthereumChain",
         params: [{ chainId: "0x89" }], // Polygon Mainnet
       });
-    } catch (switchError: any) {
-      if (switchError.code === 4902) {
+    } catch (switchError: unknown) {
+      const errorWithCode = switchError as { code?: number };
+      if (errorWithCode.code === 4902) {
         // Add Polygon if it doesn't exist
         try {
           await window.ethereum.request({

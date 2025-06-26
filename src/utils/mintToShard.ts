@@ -1,6 +1,8 @@
 // src/utils/mintToShard.ts
 
-export default async function mintToShard(entry: any) {
+import type { MemoryEntry } from "@/types/memory";
+
+export default async function mintToShard(entry: MemoryEntry) {
   console.log("🧬 Minting to shard (stub):", entry);
 
   return {

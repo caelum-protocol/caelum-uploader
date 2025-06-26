@@ -60,7 +60,7 @@ export default function MatrixRain() {
       clearInterval(interval);
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [reduceMotion]);
 
   if (reduceMotion) return null;
   return (

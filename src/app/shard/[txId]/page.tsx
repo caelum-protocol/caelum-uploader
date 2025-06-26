@@ -41,7 +41,7 @@ export default function ShardPage() {
         const blob = await res.blob();
         zip.file(file.fileName, blob);
       } catch (e) {
-        console.error("Failed to fetch file", file.fileName);
+        console.error("Failed to fetch file", file.fileName, e);
       }
     }
 

@@ -33,15 +33,6 @@ export default function Dropzone({
   useEffect(() => setMounted(true), []);
   if (!mounted) return null;
 
-  const glowMap: Record<string, string> = {
-    matrix: "#00ff00",
-    iris: "#a78bfa",
-    pepe: "#ff53da",
-    dark: "#ffffff",
-  };
-
-  const glowColor = glowMap[theme] || "#ffffff";
-
   const pulseClass =
     theme === "matrix" && isDragActive ? "dropzone-active" : "";
 

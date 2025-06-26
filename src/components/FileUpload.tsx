@@ -26,10 +26,8 @@ export const FileUpload = () => {
 
   const { addMemory } = useMemory();
 
-  const getIrys = async () => {
-    // @ts-ignore
+  const getIrys = useCallback(async () => {
     if (!window.ethereum) throw new Error("No crypto wallet found");
-    // @ts-ignore
     const provider = new providers.Web3Provider(window.ethereum);
     const irys = new WebIrys({
       network: "mainnet",
@@ -38,7 +36,7 @@ export const FileUpload = () => {
     });
     await irys.ready();
     return irys;
-  };
+  }, []);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
