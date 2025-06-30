@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { RefreshCcw } from "lucide-react";
 
-export default function DarkScratchPad() {
+export default function DarkScratchPadOverlay() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const overlayRef = useRef<HTMLCanvasElement>(null);
   const [resetKey, setResetKey] = useState(Date.now());
@@ -17,12 +17,14 @@ export default function DarkScratchPad() {
     const ctx = canvas.getContext("2d")!;
     const overlayCtx = overlay.getContext("2d")!;
 
-    // Setup dimensions
+    // Use the bounding box of the parent div (the theme-card panel)
+    const parent = canvas.parentElement!;
     const resize = () => {
-      canvas.width = overlay.width = window.innerWidth;
-      canvas.height = overlay.height = window.innerHeight;
+      const rect = parent.getBoundingClientRect();
+      canvas.width = overlay.width = rect.width;
+      canvas.height = overlay.height = rect.height;
 
-      // Generate randomized multi-stop gradient
+      // Generate gradient
       const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
       const stops = 12;
       const hueOffset = Math.floor(Math.random() * 360);
@@ -55,11 +57,12 @@ export default function DarkScratchPad() {
     overlayCtx.fillText("Draw on me", overlay.width / 2, overlay.height / 2);
 
     const getPos = (e: MouseEvent | TouchEvent) => {
+      const rect = overlay.getBoundingClientRect();
       if ("touches" in e) {
         const t = e.touches[0];
-        return { x: t.clientX, y: t.clientY };
+        return { x: t.clientX - rect.left, y: t.clientY - rect.top };
       }
-      return { x: e.clientX, y: e.clientY };
+      return { x: (e as MouseEvent).clientX - rect.left, y: (e as MouseEvent).clientY - rect.top };
     };
 
     const startDraw = (e: MouseEvent | TouchEvent) => {
@@ -85,6 +88,7 @@ export default function DarkScratchPad() {
     overlay.addEventListener("mousemove", draw);
     overlay.addEventListener("mouseup", stopDraw);
     overlay.addEventListener("mouseleave", stopDraw);
+
     overlay.addEventListener("touchstart", startDraw);
     overlay.addEventListener("touchmove", draw);
     overlay.addEventListener("touchend", stopDraw);
@@ -96,22 +100,23 @@ export default function DarkScratchPad() {
 
   if (reduceMotion) return null;
   return (
-    <>
+    <div className="absolute inset-0 pointer-events-none">
       <canvas
         ref={canvasRef}
-        className="fixed inset-0 w-screen h-screen z-0 pointer-events-none"
+        className="absolute inset-0 w-full h-full pointer-events-none"
       />
       <canvas
         ref={overlayRef}
-        className="fixed inset-0 w-screen h-screen z-1"
+        className="absolute inset-0 w-full h-full pointer-events-auto"
       />
       <button
         onClick={() => setResetKey(Date.now())}
-        className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-black/80 text-white rounded-full p-2 border border-white hover:bg-white hover:text-black transition"
+        className="absolute bottom-4 left-1/2 -translate-x-1/2 z-50 bg-black/80 text-white rounded-full p-2 border border-white hover:bg-white hover:text-black transition"
         aria-label="Reset Scratchpad"
+        style={{ pointerEvents: "auto" }}
       >
         <RefreshCcw className="w-5 h-5" />
       </button>
-    </>
+    </div>
   );
 }

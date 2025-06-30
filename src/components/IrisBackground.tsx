@@ -13,6 +13,8 @@ export default function IrisBackground({ memoryCount, memoryTrigger, archive }: 
   const [forceWhisper, setForceWhisper] = useState<string | null>(null);
   const [whisperPulse, setWhisperPulse] = useState<{ radius: number; alpha: number } | null>(null);
 
+  const quoteIndexRef = useRef(0);
+
   const mouse = useRef({ x: 0, y: 0 });
   const mouseStill = useRef<{ x: number; y: number; time: number }>({ x: 0, y: 0, time: 0 });
   const orbPositions = useRef<{ x: number; y: number }[]>([]);
@@ -263,7 +265,7 @@ export default function IrisBackground({ memoryCount, memoryTrigger, archive }: 
       ctx.shadowBlur = 16;
       ctx.fillStyle = `rgba(255,255,255,${fadeAlpha})`;
       ctx.textAlign = "center";
-      ctx.fillText(currentWhisper, cx, cy - r - 30 + Math.sin(t * 1.5) * 4);
+      ctx.fillText(currentWhisper, cx, cy + r + 34 + Math.sin(t * 1.5) * 4);
       ctx.restore();
 
       if (fadeAlpha < 1) setFadeAlpha(a => Math.min(a + 0.03, 1));
@@ -310,9 +312,16 @@ useEffect(() => {
   useEffect(() => {
     if (reduceMotion) return;
     const interval = setInterval(() => {
-      const quote = forceWhisper || (archive.length > 0
-        ? (archive.slice(-12)[Math.floor(Math.random() * Math.min(12, archive.length))]?.fileName || "")
-        : quotes[Math.floor(Math.random() * quotes.length)]);
+       let quote;
+      if (forceWhisper) {
+        quote = forceWhisper;
+      } else if (archive.length > 0) {
+        const files = archive.slice(-12);
+        quote = files[Math.floor(Math.random() * files.length)]?.fileName || "";
+      } else {
+        quote = quotes[quoteIndexRef.current];
+        quoteIndexRef.current = (quoteIndexRef.current + 1) % quotes.length;
+      }
       setCurrentWhisper(quote);
       setFadeAlpha(0);
       setPulseLevel(1);

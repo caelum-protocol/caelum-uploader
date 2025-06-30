@@ -10,15 +10,17 @@
     "test": "jest"
   },
   "dependencies": {
+    "@ethersproject/providers": "^5.8.0",
     "@irys/sdk": "^0.2.11",
     "@tanstack/react-query": "^5.80.6",
     "babel-loader": "^10.0.0",
     "buffer": "^6.0.3",
     "connectkit": "^1.9.1",
-    "ethers": "^5.7.2",
+    "ethers": "^6.14.4",
     "file-saver": "^2.0.5",
-    "framer-motion": "^12.18.1",
+    "framer-motion": "^12.19.2",
     "jszip": "^3.10.1",
+    "latest": "^0.2.0",
     "lucide-react": "^0.515.0",
     "next": "14.2.29",
     "react": "^18.3.1",
@@ -26,7 +28,6 @@
     "react-dropzone": "^14.3.8",
     "react-hot-toast": "^2.5.2",
     "use-sound": "^5.0.0",
-    "viem": "^2.31.4",
     "wagmi": "^2.15.6"
   },
   "devDependencies": {

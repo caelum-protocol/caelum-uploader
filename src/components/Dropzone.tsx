@@ -33,23 +33,21 @@ export default function Dropzone({
   useEffect(() => setMounted(true), []);
   if (!mounted) return null;
 
-  const pulseClass =
-    theme === "matrix" && isDragActive ? "dropzone-active" : "";
-
   const hoverClass =
-    theme === "matrix"
-      ? "hover:shadow-[0_0_16px_#00ff00]"
-      : theme === "iris"
+        theme === "iris"
       ? "hover:shadow-[0_0_16px_#a78bfa]"
       : theme === "pepe"
       ? "hover:shadow-[0_0_16px_#ff53da]"
       : "hover:shadow-[0_0_16px_#ffffff]";
+      
+  const pulseClass =
+    theme === "matrix" && isDragActive ? "dropzone-active" : "";
 
   return (
     <div className="relative z-20 pointer-events-auto">
     <div
       {...getRootProps()}
-      className={`theme-card border-2 rounded-xl p-4 text-center cursor-pointer select-none flex flex-col items-center justify-center transition-all duration-300 ${pulseClass} ${hoverClass}`}
+      className={`theme-card dropzone border-2 rounded-xl p-4 text-center cursor-pointer select-none flex flex-col items-center justify-center transition-all duration-300 ${pulseClass} ${hoverClass}`}
     >
       <input {...getInputProps()} />
       <FileUp size={40} className="mb-4 text-sky-300 animate-pulse" />

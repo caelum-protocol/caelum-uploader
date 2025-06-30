@@ -29,9 +29,7 @@ export default function MemoryCard({
   inShardView = false,
 }: MemoryCardProps) {
   const { theme } = useTheme();
-  const [showJson, setShowJson] = useState(
-    isNew && entry.type === "application/json"
-  );
+  const [showJson, setShowJson] = useState(false);
 
   const glowMap: Record<string, string> = {
     matrix: "#00ff00",
@@ -63,7 +61,7 @@ export default function MemoryCard({
     id={`mem-${entry.txId}`}
   >
     {isNew && (
-      <span className="absolute -top-2 -left-2 bg-yellow-500 text-black text-xs px-2 py-0.5 rounded">
+      <span className="absolute -top-1 -left-2 bg-yellow-500 text-black text-xs px-2 py-0.5 rounded">
         You uploaded this!
       </span>
     )}
@@ -145,7 +143,7 @@ export default function MemoryCard({
               isNew ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
-            Mint to Shard
+            Mint to Shard(soon)
           </button>
 
           {entry.txId && (

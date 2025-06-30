@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useMemory } from "@/context/MemoryContext";
 import MemoryCard from "./MemoryCard";
 import { useTheme } from "@/context/ThemeContext";
-import { inputStylesByTheme, ThemeName } from "@/themeStyles";
+import { inputStylesByTheme, ThemeName } from "../themeStyles";
 import { AnimatePresence } from "framer-motion";
 import useMounted from "@/utils/useMounted";
 
@@ -87,7 +87,7 @@ export const MemoryArchive = () => {
         </select>
       </div>
 
-       <div className="space-y-4 max-h-96 min-h-48 overflow-y-auto pr-2" ref={listRef}>
+       <div className="space-y-4 max-h-96 min-h-48 overflow-y-auto pr-2 scrollbar-hide" ref={listRef}>
          <AnimatePresence>
           {displayLog.length > 0 ? (
             displayLog.map((entry) => (
