@@ -4,10 +4,13 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import type { MemoryEntry } from "@/types/memory";
 
+const QUOTE_CHANGE_MS = 15000;
+
 export default function IrisBackground({ memoryCount, memoryTrigger, archive }: { memoryCount: number; memoryTrigger: boolean; archive: MemoryEntry[] }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reduceMotion = usePrefersReducedMotion();
   const [currentWhisper, setCurrentWhisper] = useState("Silence is where thoughts bloom.");
+  const currentWhisperRef = useRef(currentWhisper);
   const [fadeAlpha, setFadeAlpha] = useState(1);
   const [pulseLevel, setPulseLevel] = useState(0);
   const [forceWhisper, setForceWhisper] = useState<string | null>(null);
@@ -25,6 +28,10 @@ export default function IrisBackground({ memoryCount, memoryTrigger, archive }: 
 
   const [starTint, setStarTint] = useState(0);
 
+    useEffect(() => {
+    currentWhisperRef.current = currentWhisper;
+  }, [currentWhisper]);
+
   const quotes = useMemo(
     () => [
       "Silence is where thoughts bloom.",
@@ -40,6 +47,11 @@ export default function IrisBackground({ memoryCount, memoryTrigger, archive }: 
     ],
     []
   );
+
+  const combinedQuotes = useMemo(() => {
+    const recentFiles = archive.slice(-12).map(entry => entry.fileName);
+    return [...quotes, ...recentFiles];
+  }, [archive, quotes]);
 
   useEffect(() => {
     if (reduceMotion) return;
@@ -265,7 +277,7 @@ export default function IrisBackground({ memoryCount, memoryTrigger, archive }: 
       ctx.shadowBlur = 16;
       ctx.fillStyle = `rgba(255,255,255,${fadeAlpha})`;
       ctx.textAlign = "center";
-      ctx.fillText(currentWhisper, cx, cy + r + 34 + Math.sin(t * 1.5) * 4);
+      ctx.fillText(currentWhisperRef.current, cx, cy + r + 34 + Math.sin(t * 1.5) * 4);
       ctx.restore();
 
       if (fadeAlpha < 1) setFadeAlpha(a => Math.min(a + 0.03, 1));
@@ -312,24 +324,26 @@ useEffect(() => {
   useEffect(() => {
     if (reduceMotion) return;
     const interval = setInterval(() => {
-       let quote;
+      let quote;
       if (forceWhisper) {
         quote = forceWhisper;
-      } else if (archive.length > 0) {
-        const files = archive.slice(-12);
-        quote = files[Math.floor(Math.random() * files.length)]?.fileName || "";
       } else {
-        quote = quotes[quoteIndexRef.current];
-        quoteIndexRef.current = (quoteIndexRef.current + 1) % quotes.length;
+        const list = combinedQuotes;
+        if (list.length > 0) {
+          quote = list[quoteIndexRef.current % list.length];
+          quoteIndexRef.current = (quoteIndexRef.current + 1) % list.length;
+        } else {
+          quote = "";
+        }
       }
       setCurrentWhisper(quote);
       setFadeAlpha(0);
       setPulseLevel(1);
       setWhisperPulse({ radius: 30, alpha: 0.3 });
       setForceWhisper(null);
-    }, 14000);
+    }, QUOTE_CHANGE_MS);
     return () => clearInterval(interval);
-  }, [forceWhisper, archive, reduceMotion, quotes]);
+  }, [forceWhisper, reduceMotion, combinedQuotes]);
 
   useEffect(() => {
     if (reduceMotion || typeof window === "undefined") return; // window check for SSR safety
